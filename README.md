@@ -1,5 +1,9 @@
 # How to Run the Project
 
+> **Note:** This repository was cloned from the original project at https://github.com/ChristophHandschuh/chatbot-ui.git
+
+## Install dependencies
+
 ## Install dependencies
 
 ```bash
