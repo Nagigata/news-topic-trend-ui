@@ -2,27 +2,32 @@
 
 > **Note:** This repository was cloned from the original project at https://github.com/ChristophHandschuh/chatbot-ui.git
 
-## Install dependencies
+## Getting Started
 
-## Install dependencies
+1. Clone the repository
 
 ```bash
-npm install
+git clone https://github.com/Nagigata/news-topic-trend-ui.git
 ```
 
-## Start the development server
+2. Install dependencies
+
+```bash
+npm i
+```
+
+3. Start the development server
 
 ```bash
 npm run dev
 ```
 
-## Test Backend (Optional)
+## Test Mode
 
-If you want to run the test backend:
+The project includes a test backend for development and testing purposes. To use the test mode:
 
-1. Navigate to the `testbackend` directory.
-
-2. Create and activate a Python virtual environment:
+1. Navigate to the testbackend directory
+2. Create a Python virtual environment:
 
 ```bash
 python -m venv venv
@@ -35,7 +40,7 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 pip install websockets
 ```
 
-4. Start the backend server:
+4. Run the test backend:
 
 ```bash
 python test.py
