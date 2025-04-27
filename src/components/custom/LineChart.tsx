@@ -8,55 +8,67 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface ChartDataPoint {
+export interface ChartDataPoint {
   date: string;
   fullDate: string;
-  PoliticsPercent: number;
-  EconomicsPercent: number;
-  TechnologyPercent: number;
-  HealthPercent: number;
-  EducationPercent: number;
-  SocietyPercent: number;
+  // PoliticsPercent: number;
+  // EconomicsPercent: number;
+  // TechnologyPercent: number;
+  // HealthPercent: number;
+  // EducationPercent: number;
+  // SocietyPercent: number;
+  [key: string]: string | number;
 }
 
 interface LineChartProps {
   data: ChartDataPoint[];
+  topics: string[];
+  topicColors: { [key: string]: string };
   height?: string | number;
 }
 
 // Processed categories for percentage display
-const percentCategories = [
-  {
-    name: "PoliticsPercent",
-    displayName: "Politics",
-    color: "hsl(var(--chart-1))",
-  },
-  {
-    name: "EconomicsPercent",
-    displayName: "Economics",
-    color: "hsl(var(--chart-2))",
-  },
-  {
-    name: "TechnologyPercent",
-    displayName: "Technology",
-    color: "hsl(var(--chart-3))",
-  },
-  {
-    name: "HealthPercent",
-    displayName: "Health",
-    color: "hsl(var(--chart-4))",
-  },
-  {
-    name: "EducationPercent",
-    displayName: "Education",
-    color: "hsl(var(--chart-5))",
-  },
-  {
-    name: "SocietyPercent",
-    displayName: "Society",
-    color: "hsl(var(--chart-6))",
-  },
-];
+// const percentCategories = [
+//   {
+//     name: "PoliticsPercent",
+//     displayName: "Politics",
+//     color: "hsl(var(--chart-1))",
+//   },
+//   {
+//     name: "EconomicsPercent",
+//     displayName: "Economics",
+//     color: "hsl(var(--chart-2))",
+//   },
+//   {
+//     name: "TechnologyPercent",
+//     displayName: "Technology",
+//     color: "hsl(var(--chart-3))",
+//   },
+//   {
+//     name: "HealthPercent",
+//     displayName: "Health",
+//     color: "hsl(var(--chart-4))",
+//   },
+//   {
+//     name: "EducationPercent",
+//     displayName: "Education",
+//     color: "hsl(var(--chart-5))",
+//   },
+//   {
+//     name: "SocietyPercent",
+//     displayName: "Society",
+//     color: "hsl(var(--chart-6))",
+//   },
+// ];
+
+// Chuyển đổi nhãn chủ đề thành dạng dễ đọc
+const formatTopicName = (topic: string) => {
+  return topic
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 // Custom tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -65,18 +77,23 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)
-      .map((entry) => {
-        // Get the original category name without "Percent" suffix
-        const categoryInfo = percentCategories.find(
-          (c) => c.name === entry.dataKey
-        );
+      .map((entry) => ({
+        name: formatTopicName(entry.dataKey.replace("percentages.", "")),
+        color: entry.stroke,
+        percentage: entry.value.toFixed(1),
+      }));
+    // .map((entry) => {
+    //   // Get the original category name without "Percent" suffix
+    //   const categoryInfo = percentCategories.find(
+    //     (c) => c.name === entry.dataKey
+    //   );
 
-        return {
-          name: categoryInfo?.displayName || entry.name,
-          color: entry.stroke,
-          percentage: entry.value.toFixed(1), // Already a percentage
-        };
-      });
+    //   return {
+    //     name: categoryInfo?.displayName || entry.name,
+    //     color: entry.stroke,
+    //     percentage: entry.value.toFixed(1), // Already a percentage
+    //   };
+    // });
 
     return (
       <div className="bg-card p-4 rounded-xl border shadow-lg">
@@ -115,17 +132,27 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const LineChart = ({ data, height = "600px" }: LineChartProps) => {
+export const LineChart = ({
+  data,
+  topics,
+  topicColors,
+  height = "600px",
+}: LineChartProps) => {
   // Find the maximum percentage value across all data points
+  // const maxPercent = Math.max(
+  //   ...data.flatMap((item) => [
+  //     item.PoliticsPercent || 0,
+  //     item.EconomicsPercent || 0,
+  //     item.TechnologyPercent || 0,
+  //     item.HealthPercent || 0,
+  //     item.EducationPercent || 0,
+  //     item.SocietyPercent || 0,
+  //   ])
+  // );
   const maxPercent = Math.max(
-    ...data.flatMap((item) => [
-      item.PoliticsPercent || 0,
-      item.EconomicsPercent || 0,
-      item.TechnologyPercent || 0,
-      item.HealthPercent || 0,
-      item.EducationPercent || 0,
-      item.SocietyPercent || 0,
-    ])
+    ...data.flatMap((item) =>
+      topics.map((topic) => item.percentages?.[topic] || 0)
+    )
   );
 
   // Round up to the nearest 5%
@@ -145,14 +172,30 @@ export const LineChart = ({ data, height = "600px" }: LineChartProps) => {
             ticks={ticks}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          {percentCategories.map((category) => (
+          <Legend
+            formatter={(value) =>
+              formatTopicName(value.replace("percentages.", ""))
+            }
+          />
+          {/* {percentCategories.map((category) => (
             <Line
               key={category.name}
               type="monotone"
               name={category.displayName}
               dataKey={category.name}
               stroke={category.color}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6 }}
+            />
+          ))} */}
+          {topics.map((topic) => (
+            <Line
+              key={topic}
+              type="monotone"
+              name={`percentages.${topic}`}
+              dataKey={`percentages.${topic}`}
+              stroke={topicColors[topic] || "#8884d8"}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 6 }}
