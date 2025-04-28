@@ -3,22 +3,10 @@ import { ChevronDown, Calendar } from "lucide-react";
 
 // Available months for selection
 export const months = [
-  { value: "1", label: "January 2024" },
-  { value: "2", label: "February 2024" },
-  { value: "3", label: "March 2024" },
-  { value: "4", label: "April 2024" },
-  { value: "5", label: "May 2024" },
-  { value: "6", label: "June 2024" },
-  { value: "7", label: "July 2024" },
-  { value: "8", label: "August 2024" },
-  { value: "9", label: "September 2024" },
-  { value: "10", label: "October 2024" },
-  { value: "11", label: "November 2024" },
-  { value: "12", label: "December 2024" },
-  { value: "13", label: "January 2025" },
-  { value: "14", label: "February 2025" },
-  { value: "15", label: "March 2025" },
-  { value: "16", label: "April 2025" },
+  { value: "1", label: "January 2025" },
+  { value: "2", label: "February 2025" },
+  { value: "3", label: "March 2025" },
+  { value: "4", label: "April 2025" },
 ];
 
 interface MonthPickerProps {

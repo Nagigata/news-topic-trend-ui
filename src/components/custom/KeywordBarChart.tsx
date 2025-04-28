@@ -9,7 +9,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 // Interface cho từng keyword
 export interface KeywordItem {
@@ -18,143 +21,14 @@ export interface KeywordItem {
   category: string;
 }
 
-// Tất cả keywords theo topic
-// const keywordsData: { [key: string]: KeywordItem[] } = {
-//   Politics: [
-//     { text: "Elections", value: 80, category: "Politics" },
-//     { text: "Democracy", value: 70, category: "Politics" },
-//     { text: "Policy Reform", value: 65, category: "Politics" },
-//     { text: "Legislation", value: 60, category: "Politics" },
-//     { text: "International Relations", value: 55, category: "Politics" },
-//     { text: "Voting Rights", value: 50, category: "Politics" },
-//     { text: "Immigration", value: 45, category: "Politics" },
-//     { text: "Political Parties", value: 42, category: "Politics" },
-//     { text: "National Security", value: 40, category: "Politics" },
-//     { text: "Foreign Policy", value: 38, category: "Politics" },
-//   ],
-
-//   Economics: [
-//     { text: "Inflation", value: 78, category: "Economics" },
-//     { text: "GDP Growth", value: 65, category: "Economics" },
-//     { text: "Interest Rates", value: 62, category: "Economics" },
-//     { text: "Stock Market", value: 58, category: "Economics" },
-//     { text: "Fiscal Policy", value: 52, category: "Economics" },
-//     { text: "Cryptocurrency", value: 48, category: "Economics" },
-//     { text: "Global Trade", value: 45, category: "Economics" },
-//     { text: "Supply Chain", value: 42, category: "Economics" },
-//     { text: "Employment", value: 40, category: "Economics" },
-//     { text: "Consumer Spending", value: 38, category: "Economics" },
-//   ],
-//   Technology: [
-//     { text: "AI", value: 85, category: "Technology" },
-//     { text: "Machine Learning", value: 72, category: "Technology" },
-//     { text: "Blockchain", value: 65, category: "Technology" },
-//     { text: "Quantum Computing", value: 58, category: "Technology" },
-//     { text: "Cloud Computing", value: 52, category: "Technology" },
-//     { text: "Robotics", value: 48, category: "Technology" },
-//     { text: "IoT", value: 46, category: "Technology" },
-//     { text: "5G", value: 43, category: "Technology" },
-//     { text: "Cybersecurity", value: 42, category: "Technology" },
-//     { text: "VR/AR", value: 38, category: "Technology" },
-//   ],
-//   Health: [
-//     { text: "COVID-19", value: 82, category: "Health" },
-//     { text: "Vaccines", value: 70, category: "Health" },
-//     { text: "Mental Health", value: 65, category: "Health" },
-//     { text: "Telemedicine", value: 58, category: "Health" },
-//     { text: "Healthcare Policy", value: 52, category: "Health" },
-//     { text: "Wellness", value: 48, category: "Health" },
-//     { text: "Chronic Disease", value: 45, category: "Health" },
-//     { text: "Public Health", value: 42, category: "Health" },
-//     { text: "Medical Research", value: 40, category: "Health" },
-//     { text: "Nutrition", value: 38, category: "Health" },
-//   ],
-
-//   Education: [
-//     { text: "Online Learning", value: 75, category: "Education" },
-//     { text: "Digital Literacy", value: 65, category: "Education" },
-//     { text: "Educational Technology", value: 60, category: "Education" },
-//     { text: "Student Debt", value: 55, category: "Education" },
-//     { text: "STEM Education", value: 50, category: "Education" },
-//     { text: "Higher Education", value: 48, category: "Education" },
-//     { text: "K-12", value: 45, category: "Education" },
-//     { text: "Teachers", value: 42, category: "Education" },
-//     { text: "Education Reform", value: 40, category: "Education" },
-//     { text: "Academic Research", value: 38, category: "Education" },
-//   ],
-//   Society: [
-//     { text: "Social Media", value: 85, category: "Society" },
-//     { text: "Cultural Trends", value: 72, category: "Society" },
-//     { text: "Diversity & Inclusion", value: 68, category: "Society" },
-//     { text: "Urban Development", value: 62, category: "Society" },
-//     { text: "Family Structure", value: 55, category: "Society" },
-//     { text: "Generation Gap", value: 52, category: "Society" },
-//     { text: "Social Movements", value: 48, category: "Society" },
-//     { text: "Community Building", value: 45, category: "Society" },
-//     { text: "Social Norms", value: 42, category: "Society" },
-//     { text: "Digital Society", value: 40, category: "Society" },
-//   ],
-// };
-
-// // Danh sách các topic
-// const topics = [
-//   "Politics",
-//   "Economics",
-//   "Technology",
-//   "Health",
-//   "Education",
-//   "Society",
-// ];
-
-// // Màu sắc cho từng topic
-// const topicColors = {
-//   Politics: "hsl(var(--chart-1))",
-//   Economics: "hsl(var(--chart-2))",
-//   Technology: "hsl(var(--chart-3))",
-//   Health: "hsl(var(--chart-4))",
-//   Education: "hsl(var(--chart-5))",
-//   Society: "hsl(var(--chart-6))",
-// };
-
-// // Tạo mảng màu cho các thanh trong biểu đồ
-// const generateColors = (topic: string, count: number) => {
-//   const baseColor = topicColors[topic as keyof typeof topicColors];
-//   const baseHsl = baseColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-
-//   if (!baseHsl) return Array(count).fill(baseColor);
-
-//   const hue = parseInt(baseHsl[1]);
-//   const saturation = parseInt(baseHsl[2]);
-//   const baseLightness = parseInt(baseHsl[3]);
-
-//   return Array.from({ length: count }, (_, i) => {
-//     // Giảm dần độ sáng cho các thanh từ trên xuống dưới
-//     const lightness = Math.max(baseLightness - i * 1.5, baseLightness * 0.7);
-//     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-//   });
-// };
-
 interface KeywordBarChartProps {
   keywordsData: { [key: string]: KeywordItem[] };
   topics: string[];
   topicColors: { [key: string]: string };
   className?: string;
+  maxDisplayItems?: number;
+  isLoading?: boolean;
 }
-
-// Tạo màu cho các thanh dựa trên màu chủ đề
-const generateBarColors = (topicColor: string, count: number) => {
-  const baseHsl = topicColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!baseHsl) return Array(count).fill(topicColor);
-
-  const hue = parseInt(baseHsl[1]);
-  const saturation = parseInt(baseHsl[2]);
-  const baseLightness = parseInt(baseHsl[3]);
-
-  return Array.from({ length: count }, (_, i) => {
-    const lightness = Math.max(baseLightness - i * 1.5, baseLightness * 0.7);
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  });
-};
 
 // Chuyển đổi nhãn chủ đề thành dạng dễ đọc
 const formatTopicName = (topic: string) => {
@@ -165,21 +39,27 @@ const formatTopicName = (topic: string) => {
     .join(" ");
 };
 
+// Rút gọn tên chủ đề nếu quá dài để hiển thị
+const shortenTopicName = (topic: string, maxLength = 35) => {
+  const formattedName = formatTopicName(topic);
+  if (formattedName.length <= maxLength) return formattedName;
+  return formattedName.substring(0, maxLength) + "...";
+};
+
 export function KeywordBarChart({
   keywordsData,
   topics,
   topicColors,
   className,
+  maxDisplayItems = 10,
+  isLoading = false,
 }: KeywordBarChartProps) {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(
     topics[0] || null
   );
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-
-  // // Tính toán dữ liệu biểu đồ từ các từ khóa đã sắp xếp
-  // const chartData = keywordsData[selectedTopic]
-  //   .sort((a, b) => b.value - a.value) // Sắp xếp từ cao xuống thấp
-  //   .slice(0, 10); // Lấy 10 từ khóa hàng đầu
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const [maxValue, setMaxValue] = useState<number>(50);
 
   // Cập nhật selectedTopic khi topics thay đổi
   useEffect(() => {
@@ -191,68 +71,223 @@ export function KeywordBarChart({
     }
   }, [topics, selectedTopic]);
 
+  // Reset animation khi chuyển chủ đề và đặt lại sau khi animation hoàn thành
+  useEffect(() => {
+    setAnimationComplete(false);
+    // Đặt animation hoàn thành
+    const timer = setTimeout(() => setAnimationComplete(true), 800);
+    return () => clearTimeout(timer);
+  }, [selectedTopic]);
+
+  // Xác định màu gradient dựa trên màu của chủ đề
+  const getGradientColors = (topicColor: string) => {
+    if (!topicColor) return { start: "#8884d8", end: "#8884d8" };
+
+    // Xử lý màu HSL
+    const hslMatch = topicColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (hslMatch) {
+      const hue = parseInt(hslMatch[1]);
+      const saturation = parseInt(hslMatch[2]);
+      const lightness = parseInt(hslMatch[3]);
+
+      return {
+        start: `hsl(${hue}, ${saturation}%, ${Math.min(lightness + 10, 90)}%)`,
+        end: `hsl(${hue}, ${saturation}%, ${Math.max(lightness - 10, 20)}%)`,
+      };
+    }
+
+    // Mặc định khi không thể xử lý màu
+    return {
+      start: topicColor,
+      end: topicColor,
+    };
+  };
+
+  // Lấy dữ liệu cho chủ đề đã chọn và tính toán maxValue
   const chartData = selectedTopic
-    ? keywordsData[selectedTopic]
-        ?.sort((a, b) => b.value - a.value) // Sắp xếp từ cao xuống thấp
-        .slice(0, 10) // Lấy 10 từ khóa hàng đầu
+    ? (keywordsData[selectedTopic] || [])
+        .sort((a, b) => b.value - a.value) // Sắp xếp từ cao xuống thấp
+        .slice(0, maxDisplayItems) // Lấy số lượng từ khóa cần hiển thị
     : [];
 
-  // Tạo mảng màu cho các thanh
-  const barColors =
-    selectedTopic && topicColors[selectedTopic]
-      ? generateBarColors(topicColors[selectedTopic], chartData.length)
-      : [];
+  // Cập nhật giá trị tối đa dựa trên dữ liệu
+  useEffect(() => {
+    if (chartData.length > 0) {
+      const highestValue = chartData[0]?.value || 0;
+      // Làm tròn lên đến 5 gần nhất và thêm 5% đệm
+      const newMaxValue = Math.ceil(highestValue / 5) * 5;
+      setMaxValue(newMaxValue);
+    } else {
+      setMaxValue(20); // Giá trị mặc định
+    }
+  }, [chartData]);
+
+  // Tạo dải màu gradient cho thanh
+  const gradientId = selectedTopic
+    ? `gradient-${selectedTopic}`
+    : "default-gradient";
+  const gradientColors = selectedTopic
+    ? getGradientColors(topicColors[selectedTopic] || "#8884d8")
+    : { start: "#8884d8", end: "#8884d8" };
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const topicColor = selectedTopic ? topicColors[selectedTopic] : "#8884d8";
+
       return (
-        <div className="bg-card p-2 rounded-md border shadow-sm">
-          <p className="font-medium">{data.text}</p>
-          <p className="text-sm text-muted-foreground">
-            Frequency: <span className="font-medium">{data.value}%</span>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Category: <span className="font-medium">{data.category}</span>
-          </p>
+        <div
+          className="bg-card p-3 rounded-lg border shadow-md"
+          style={{
+            borderLeft: `4px solid ${topicColor}`,
+          }}
+        >
+          <p className="font-medium text-base mb-1">{data.text}</p>
+          <div className="flex items-center gap-2">
+            <div className="w-full bg-muted h-1.5 rounded-full">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${(data.value / maxValue) * 100}%`,
+                  background: `linear-gradient(to right, ${gradientColors.start}, ${gradientColors.end})`,
+                }}
+              />
+            </div>
+            <span className="font-semibold">{data.value}%</span>
+          </div>
         </div>
       );
     }
     return null;
   };
 
+  // Label renderer for the bars
+  const renderCustomizedLabel = (props: any) => {
+    const { x, y, width, value, height } = props;
+    const valueLabel = `${value}%`;
+    const labelX = x + width + 5;
+    const labelY = y + height / 2;
+
+    // Hiển thị label khi animation hoàn thành
+    if (!animationComplete) return null;
+
+    return (
+      <text
+        x={labelX}
+        y={labelY}
+        fill="#888"
+        textAnchor="start"
+        dominantBaseline="middle"
+        fontSize={12}
+        fontWeight={500}
+      >
+        {valueLabel}
+      </text>
+    );
+  };
+
+  // Tạo các giá trị ticks cho trục X
+  const xAxisTicks = Array.from(
+    { length: Math.floor(maxValue / 5) + 1 },
+    (_, i) => i * 5
+  );
+
+  if (isLoading) {
+    return (
+      <Card className={className}>
+        <CardHeader className="pb-4">
+          <CardTitle>Top Keywords by Topic</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground">Loading data...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className={className}>
-      <CardHeader className="pb-6">
+      <CardHeader className="pb-4">
         <CardTitle>Top Keywords by Topic</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs
           value={selectedTopic || undefined}
-          onValueChange={setSelectedTopic}
+          onValueChange={(value) => {
+            setSelectedTopic(value);
+          }}
           className="w-full"
         >
-          <TabsList className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 mb-6">
-            {topics.map((topic) => (
-              <TabsTrigger
-                key={topic}
-                value={topic}
-                className="text-xs sm:text-sm capitalize"
-              >
-                {formatTopicName(topic)}
-              </TabsTrigger>
-            ))}
+          <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 h-auto mb-6 px-1 py-2 justify-items-center items-center">
+            {topics.map((topic) => {
+              const isActive = selectedTopic === topic;
+              const topicColor = topicColors[topic] || "#8884d8";
+
+              return (
+                <TabsTrigger
+                  key={topic}
+                  value={topic}
+                  className={`text-xs py-1.5 px-3 rounded-full transition-all truncate ${
+                    isActive ? "font-medium" : "opacity-70"
+                  }`}
+                  style={{
+                    backgroundColor: isActive
+                      ? `${topicColor}20`
+                      : "transparent",
+                    borderColor: topicColor,
+                    border: isActive
+                      ? `1px solid ${topicColor}`
+                      : "1px solid transparent",
+                    maxWidth: "95%",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={formatTopicName(topic)} // Hiển thị tên đầy đủ khi hover
+                >
+                  {shortenTopicName(topic)}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
-          {topics.map((topic) => (
-            <TabsContent key={topic} value={topic} className="mt-0">
+          {/* SVG defs for gradients */}
+          <svg style={{ height: 0 }}>
+            {topics.map((topic) => {
+              const colors = getGradientColors(topicColors[topic] || "#8884d8");
+              return (
+                <defs key={`gradient-def-${topic}`}>
+                  <linearGradient
+                    id={`gradient-${topic}`}
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="0"
+                  >
+                    <stop offset="0%" stopColor={colors.start} />
+                    <stop offset="100%" stopColor={colors.end} />
+                  </linearGradient>
+                </defs>
+              );
+            })}
+          </svg>
+
+          {selectedTopic ? (
+            <TabsContent
+              key={selectedTopic}
+              value={selectedTopic}
+              className="mt-0"
+            >
               <div className="h-[400px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={chartData}
                     layout="vertical"
-                    margin={{ top: 5, right: 30, left: 90, bottom: 5 }}
+                    margin={{ top: 5, right: 70, left: 90, bottom: 5 }}
                     onMouseMove={(e) => {
                       if (e.activeTooltipIndex !== undefined) {
                         setHoverIndex(e.activeTooltipIndex);
@@ -262,43 +297,90 @@ export function KeywordBarChart({
                   >
                     <XAxis
                       type="number"
-                      domain={[0, 100]}
+                      domain={[0, maxValue]}
                       tickFormatter={(value) => `${value}%`}
+                      tick={{ fontSize: 12, fill: "#888888" }}
+                      axisLine={{ stroke: "#e5e7eb" }}
+                      tickLine={false}
+                      ticks={xAxisTicks}
                     />
                     <YAxis
                       type="category"
                       dataKey="text"
                       width={80}
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: 13, fill: "#444444" }}
+                      axisLine={false}
+                      tickLine={false}
                     />
                     <Tooltip
                       content={<CustomTooltip />}
-                      cursor={{ fill: "hsl(var(--muted))" }}
+                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
                     />
                     <Bar
                       dataKey="value"
-                      barSize={28}
+                      barSize={26}
                       radius={[0, 4, 4, 0]}
-                      animationDuration={500}
+                      animationDuration={800}
+                      animationEasing="ease-in-out"
+                      onAnimationEnd={() => setAnimationComplete(true)}
                     >
-                      {chartData?.map((entry, index) => (
+                      <LabelList
+                        dataKey="value"
+                        content={renderCustomizedLabel}
+                      />
+                      {chartData.map((entry, index) => (
                         <Cell
                           key={`cell-${index}`}
-                          fill={barColors[index]}
+                          fill={`url(#${gradientId})`}
                           fillOpacity={
-                            hoverIndex === null || hoverIndex === index
+                            hoverIndex === null
+                              ? 1
+                              : hoverIndex === index
                               ? 1
                               : 0.6
                           }
-                          className="transition-opacity duration-300"
+                          style={{
+                            transition: "fill-opacity 0.3s",
+                            cursor: "pointer",
+                          }}
                         />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+              {chartData.length === 0 && (
+                <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                  There is no keyword data for this topic.
+                </div>
+              )}
             </TabsContent>
-          ))}
+          ) : (
+            <div className="h-[400px] flex flex-col items-center justify-center text-muted-foreground">
+              <p className="mb-3">Vui lòng chọn một chủ đề để xem từ khóa</p>
+              <div className="flex gap-2 flex-wrap justify-center">
+                {topics.slice(0, 3).map((topic) => (
+                  <Button
+                    key={topic}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedTopic(topic)}
+                    className="text-xs"
+                    style={{
+                      borderColor: topicColors[topic] || "#8884d8",
+                    }}
+                  >
+                    {shortenTopicName(topic, 15)}
+                  </Button>
+                ))}
+                {topics.length > 3 && (
+                  <Button variant="outline" size="sm" className="text-xs">
+                    +{topics.length - 3} chủ đề khác
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </Tabs>
       </CardContent>
     </Card>

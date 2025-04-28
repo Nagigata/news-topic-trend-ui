@@ -7,17 +7,14 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export interface ChartDataPoint {
   date: string;
   fullDate: string;
-  // PoliticsPercent: number;
-  // EconomicsPercent: number;
-  // TechnologyPercent: number;
-  // HealthPercent: number;
-  // EducationPercent: number;
-  // SocietyPercent: number;
-  [key: string]: string | number;
+  percentages: { [key: string]: number };
+  [key: string]: string | number | { [key: string]: number };
 }
 
 interface LineChartProps {
@@ -25,41 +22,9 @@ interface LineChartProps {
   topics: string[];
   topicColors: { [key: string]: string };
   height?: string | number;
+  maxVisibleTopics?: number;
+  isLoading?: boolean;
 }
-
-// Processed categories for percentage display
-// const percentCategories = [
-//   {
-//     name: "PoliticsPercent",
-//     displayName: "Politics",
-//     color: "hsl(var(--chart-1))",
-//   },
-//   {
-//     name: "EconomicsPercent",
-//     displayName: "Economics",
-//     color: "hsl(var(--chart-2))",
-//   },
-//   {
-//     name: "TechnologyPercent",
-//     displayName: "Technology",
-//     color: "hsl(var(--chart-3))",
-//   },
-//   {
-//     name: "HealthPercent",
-//     displayName: "Health",
-//     color: "hsl(var(--chart-4))",
-//   },
-//   {
-//     name: "EducationPercent",
-//     displayName: "Education",
-//     color: "hsl(var(--chart-5))",
-//   },
-//   {
-//     name: "SocietyPercent",
-//     displayName: "Society",
-//     color: "hsl(var(--chart-6))",
-//   },
-// ];
 
 // Chuyển đổi nhãn chủ đề thành dạng dễ đọc
 const formatTopicName = (topic: string) => {
@@ -73,7 +38,7 @@ const formatTopicName = (topic: string) => {
 // Custom tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
-    const fullDate = payload[0].payload.fullDate || `April ${label}, 2025`;
+    const fullDate = payload[0]?.payload.fullDate || `April ${label}, 2025`;
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)
@@ -82,18 +47,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         color: entry.stroke,
         percentage: entry.value.toFixed(1),
       }));
-    // .map((entry) => {
-    //   // Get the original category name without "Percent" suffix
-    //   const categoryInfo = percentCategories.find(
-    //     (c) => c.name === entry.dataKey
-    //   );
-
-    //   return {
-    //     name: categoryInfo?.displayName || entry.name,
-    //     color: entry.stroke,
-    //     percentage: entry.value.toFixed(1), // Already a percentage
-    //   };
-    // });
 
     return (
       <div className="bg-card p-4 rounded-xl border shadow-lg">
@@ -137,21 +90,42 @@ export const LineChart = ({
   topics,
   topicColors,
   height = "600px",
+  maxVisibleTopics = 5,
+  isLoading = false,
 }: LineChartProps) => {
-  // Find the maximum percentage value across all data points
-  // const maxPercent = Math.max(
-  //   ...data.flatMap((item) => [
-  //     item.PoliticsPercent || 0,
-  //     item.EconomicsPercent || 0,
-  //     item.TechnologyPercent || 0,
-  //     item.HealthPercent || 0,
-  //     item.EducationPercent || 0,
-  //     item.SocietyPercent || 0,
-  //   ])
-  // );
+  const [visibleTopics, setVisibleTopics] = useState<Set<string>>(
+    new Set(topics.slice(0, maxVisibleTopics))
+  );
+  const [hoveredTopic, setHoveredTopic] = useState<string | null>(null);
+
+  // Xử lý khi không có dữ liệu hoặc đang tải
+  if (isLoading) {
+    return (
+      <div style={{ height }} className="flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          <p className="text-muted-foreground">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (data.length === 0 || topics.length === 0) {
+    return (
+      <div style={{ height }} className="flex items-center justify-center">
+        <p className="text-muted-foreground">
+          Không có dữ liệu xu hướng chủ đề
+        </p>
+      </div>
+    );
+  }
+
+  // Chỉ tính toán max dựa trên các chủ đề đang hiển thị
   const maxPercent = Math.max(
     ...data.flatMap((item) =>
-      topics.map((topic) => item.percentages?.[topic] || 0)
+      Array.from(visibleTopics).map(
+        (topic) => (item.percentages as { [key: string]: number })[topic] || 0
+      )
     )
   );
 
@@ -161,143 +135,127 @@ export const LineChart = ({
   // Generate ticks at 5% intervals
   const ticks = Array.from({ length: yAxisMax / 5 + 1 }, (_, i) => i * 5);
 
+  // Xử lý bật/tắt hiển thị một chủ đề
+  const toggleTopic = (topic: string) => {
+    const newVisibleTopics = new Set(visibleTopics);
+    if (newVisibleTopics.has(topic)) {
+      newVisibleTopics.delete(topic);
+    } else {
+      newVisibleTopics.add(topic);
+    }
+    setVisibleTopics(newVisibleTopics);
+  };
+
+  // Hiển thị lại tất cả các chủ đề
+  const showAllTopics = () => {
+    setVisibleTopics(new Set(topics));
+  };
+
+  // Ẩn tất cả các chủ đề
+  const hideAllTopics = () => {
+    setVisibleTopics(new Set());
+  };
+
+  // Custom Legend để có thể tương tác
+  const CustomLegend = ({ payload }: any) => {
+    return (
+      <div className="flex flex-wrap gap-3 justify-center mt-2 mb-4">
+        {payload.map((entry: any, index: number) => {
+          const topic = entry.dataKey.replace("percentages.", "");
+          const isVisible = visibleTopics.has(topic);
+          const isHovered = hoveredTopic === topic;
+
+          return (
+            <div
+              key={index}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all ${
+                isVisible
+                  ? "border-2 border-opacity-100"
+                  : "border border-opacity-50 opacity-60"
+              }`}
+              style={{
+                borderColor: entry.color,
+                backgroundColor: isVisible ? `${entry.color}20` : "transparent",
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
+              }}
+              onClick={() => toggleTopic(topic)}
+              onMouseEnter={() => setHoveredTopic(topic)}
+              onMouseLeave={() => setHoveredTopic(null)}
+            >
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-xs font-medium">
+                {formatTopicName(topic)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
-    <div style={{ height }}>
+    <div style={{ height }} className="relative">
+      <div className="absolute top-0 right-0 flex gap-2 z-10">
+        <button
+          className="text-xs bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1.5 rounded-md font-medium transition-colors"
+          onClick={showAllTopics}
+        >
+          Show All
+        </button>
+        <button
+          className="text-xs bg-muted hover:bg-muted/80 px-3 py-1.5 rounded-md font-medium transition-colors"
+          onClick={hideAllTopics}
+        >
+          Clear All
+        </button>
+      </div>
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsLineChart data={data}>
-          <XAxis dataKey="date" />
+        <RechartsLineChart
+          data={data}
+          margin={{ top: 25, right: 30, left: 20, bottom: 5 }}
+        >
+          <XAxis dataKey="date" stroke="#888888" tickLine={false} />
           <YAxis
             domain={[0, yAxisMax]}
             tickFormatter={(value) => `${value}%`}
             ticks={ticks}
+            stroke="#888888"
+            tickLine={false}
+            axisLine={false}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend
-            formatter={(value) =>
-              formatTopicName(value.replace("percentages.", ""))
-            }
-          />
-          {/* {percentCategories.map((category) => (
-            <Line
-              key={category.name}
-              type="monotone"
-              name={category.displayName}
-              dataKey={category.name}
-              stroke={category.color}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 6 }}
-            />
-          ))} */}
-          {topics.map((topic) => (
-            <Line
-              key={topic}
-              type="monotone"
-              name={`percentages.${topic}`}
-              dataKey={`percentages.${topic}`}
-              stroke={topicColors[topic] || "#8884d8"}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 6 }}
-            />
-          ))}
+          <Legend content={<CustomLegend />} />
+          {topics.map((topic) => {
+            const isVisible = visibleTopics.has(topic);
+            const isHovered = hoveredTopic === topic;
+            const opacity = !isVisible
+              ? 0
+              : hoveredTopic === null
+              ? 1
+              : isHovered
+              ? 1
+              : 0.3;
+
+            return (
+              <Line
+                key={topic}
+                type="monotone"
+                name={`percentages.${topic}`}
+                dataKey={`percentages.${topic}`}
+                stroke={topicColors[topic] || "#8884d8"}
+                strokeWidth={isHovered ? 3 : 2}
+                dot={false}
+                activeDot={{ r: 6 }}
+                opacity={opacity}
+                strokeDasharray={isHovered ? "" : ""}
+              />
+            );
+          })}
         </RechartsLineChart>
       </ResponsiveContainer>
     </div>
   );
-};
-
-// Helper functions for data generation
-export const generateMonthlyData = (month: number, year: number) => {
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const monthData: ChartDataPoint[] = [];
-
-  let currentDate = new Date(year, month, 1);
-
-  // Giá trị ban đầu cho mỗi chủ đề
-  // Technology: đang tăng mạnh
-  // Politics: đang giảm
-  // Economics: tăng nhẹ
-  // Health: ổn định
-  // Education: giảm nhẹ
-  // Society: biến động nhẹ quanh một giá trị
-  let baseValues = {
-    Politics: 25,
-    Economics: 15,
-    Technology: 10,
-    Health: 20,
-    Education: 18,
-    Society: 12,
-  };
-
-  for (let i = 0; i < daysInMonth; i++) {
-    // Tạo xu hướng rõ ràng cho mỗi chủ đề
-    // Technology: tăng dần đều (+0.7/ngày)
-    baseValues.Technology = Math.min(baseValues.Technology + 0.7, 35);
-
-    // Politics: giảm mạnh dần (-0.6/ngày)
-    baseValues.Politics = Math.max(baseValues.Politics - 0.6, 10);
-
-    // Economics: tăng nhẹ (+0.3/ngày)
-    baseValues.Economics = Math.min(baseValues.Economics + 0.3, 25);
-
-    // Health: tương đối ổn định (±0.1)
-    baseValues.Health += Math.random() > 0.5 ? 0.1 : -0.1;
-    if (baseValues.Health < 19) baseValues.Health = 19;
-    if (baseValues.Health > 21) baseValues.Health = 21;
-
-    // Education: giảm nhẹ (-0.2/ngày)
-    baseValues.Education = Math.max(baseValues.Education - 0.2, 12);
-
-    // Society: biến động nhẹ quanh 12%
-    baseValues.Society += Math.random() - 0.5;
-    if (baseValues.Society < 10) baseValues.Society = 10;
-    if (baseValues.Society > 14) baseValues.Society = 14;
-
-    // Đảm bảo tổng = 100%
-    const total = Object.values(baseValues).reduce((sum, val) => sum + val, 0);
-    const normalizedValues = Object.entries(baseValues).map(([key, value]) => [
-      key,
-      parseFloat(((value / total) * 100).toFixed(1)),
-    ]);
-
-    const normalizedObj = Object.fromEntries(normalizedValues);
-
-    monthData.push({
-      date: formatDate(currentDate),
-      fullDate: formatFullDate(currentDate),
-      PoliticsPercent: normalizedObj.Politics,
-      EconomicsPercent: normalizedObj.Economics,
-      TechnologyPercent: normalizedObj.Technology,
-      HealthPercent: normalizedObj.Health,
-      EducationPercent: normalizedObj.Education,
-      SocietyPercent: normalizedObj.Society,
-    });
-
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return monthData;
-};
-
-const formatDate = (date: Date): string => {
-  return `${date.getDate()}`;
-};
-
-const formatFullDate = (date: Date): string => {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 };

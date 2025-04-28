@@ -23,30 +23,45 @@ const generateTopicColors = (topics: string[]) => {
 
 const fetchTrendData = async (month: number, year: number) => {
   const response = await fetch(
-    `http://localhost:8000/lda/topic-trends/?month=${month}&year=${year}`
+    `https://aacf-2405-4802-a18b-6d80-2dee-66fa-9e24-5dc4.ngrok-free.app/lda/topic-trends/?month=${month}&year=${year}`
   );
   const data = await response.json();
+  console.log(data);
   return data;
 };
 
 export const Analytics = () => {
   const [selectedMonth, setSelectedMonth] = useState("4");
-  // const chartData = generateMonthlyData(parseInt(selectedMonth) - 1, 2025);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
   const [keywordsData, setKeywordsData] = useState<{
     [key: string]: KeywordItem[];
   }>({});
   const [topicColors, setTopicColors] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchTrendData(parseInt(selectedMonth), 2025).then((data) => {
-      setChartData(data.data);
-      setTopics(data.topics);
-      setTopicColors(generateTopicColors(data.topics));
-      setKeywordsData(data.keywords);
-    });
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchTrendData(parseInt(selectedMonth), 2025);
+        setChartData(data.data);
+        setTopics(data.topics);
+        setTopicColors(generateTopicColors(data.topics));
+        setKeywordsData(data.keywords);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [selectedMonth]);
+
+  const handleMonthChange = (month: string) => {
+    setSelectedMonth(month);
+  };
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -60,7 +75,7 @@ export const Analytics = () => {
 
             <MonthPicker
               selectedMonth={selectedMonth}
-              onMonthChange={setSelectedMonth}
+              onMonthChange={handleMonthChange}
             />
           </div>
 
@@ -75,6 +90,8 @@ export const Analytics = () => {
                 topics={topics}
                 topicColors={topicColors}
                 height="500px"
+                maxVisibleTopics={4}
+                isLoading={isLoading}
               />
             </CardContent>
           </Card>
@@ -82,9 +99,11 @@ export const Analytics = () => {
           {/* Keyword Bar Chart */}
           <KeywordBarChart
             keywordsData={keywordsData}
-            topics={topics.slice(1, 6)}
+            topics={topics}
             topicColors={topicColors}
             className="mb-6"
+            maxDisplayItems={10}
+            isLoading={isLoading}
           />
         </div>
       </div>
