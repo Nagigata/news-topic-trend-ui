@@ -4,13 +4,13 @@ import {
   ThinkingMessage,
 } from "../../components/custom/message";
 import { useScrollToBottom } from "@/components/custom/use-scroll-to-bottom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { message } from "../../interfaces/interfaces";
 import { Overview } from "@/components/custom/overview";
 import { Header } from "@/components/custom/header";
 import { v4 as uuidv4 } from "uuid";
 
-const socket = new WebSocket("ws://localhost:8090"); //change to your websocket endpoint
+const API_URL = "http://localhost:8000/chat";
 
 export function Chat() {
   const [messagesContainerRef, messagesEndRef] =
@@ -18,67 +18,107 @@ export function Chat() {
   const [messages, setMessages] = useState<message[]>([]);
   const [question, setQuestion] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const messageHandlerRef = useRef<((event: MessageEvent) => void) | null>(
-    null
-  );
-
-  const cleanupMessageHandler = () => {
-    if (messageHandlerRef.current && socket) {
-      socket.removeEventListener("message", messageHandlerRef.current);
-      messageHandlerRef.current = null;
-    }
-  };
+  // Hủy yêu cầu cũ khi component unmount hoặc khi gửi yêu cầu mới
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   async function handleSubmit(text?: string) {
-    if (!socket || socket.readyState !== WebSocket.OPEN || isLoading) return;
+    if (isLoading) return;
 
     const messageText = text || question;
-    setIsLoading(true);
-    cleanupMessageHandler();
+    if (!messageText.trim()) return;
 
+    // Hủy yêu cầu trước đó nếu có
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    setIsLoading(true);
     const traceId = uuidv4();
+
+    // Thêm tin nhắn của người dùng vào danh sách
     setMessages((prev) => [
       ...prev,
       { content: messageText, role: "user", id: traceId },
     ]);
-    socket.send(messageText);
     setQuestion("");
 
+    // Tạo AbortController mới cho yêu cầu này
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     try {
-      const messageHandler = (event: MessageEvent) => {
-        setIsLoading(false);
-        if (event.data.includes("[END]")) {
-          return;
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: messageText }),
+        signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let responseText = "";
+
+        // Đọc và xử lý dữ liệu stream
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          const chunk = decoder.decode(value, { stream: true });
+          responseText += chunk;
+
+          // Cập nhật tin nhắn từ bot
+          setMessages((prev) => {
+            const lastMessage = prev[prev.length - 1];
+
+            const newMessage = {
+              content: responseText,
+              role: "assistant",
+              id: traceId,
+            };
+
+            return lastMessage?.role === "assistant"
+              ? [...prev.slice(0, -1), newMessage]
+              : [...prev, newMessage];
+          });
         }
-
-        setMessages((prev) => {
-          const lastMessage = prev[prev.length - 1];
-          const newContent =
-            lastMessage?.role === "assistant"
-              ? lastMessage.content + event.data
-              : event.data;
-
-          const newMessage = {
-            content: newContent,
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        console.error("API error:", error);
+        // Hiển thị thông báo lỗi cho người dùng
+        setMessages((prev) => [
+          ...prev,
+          {
+            content:
+              "Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.",
             role: "assistant",
             id: traceId,
-          };
-          return lastMessage?.role === "assistant"
-            ? [...prev.slice(0, -1), newMessage]
-            : [...prev, newMessage];
-        });
-
-        if (event.data.includes("[END]")) {
-          cleanupMessageHandler();
-        }
-      };
-
-      messageHandlerRef.current = messageHandler;
-      socket.addEventListener("message", messageHandler);
-    } catch (error) {
-      console.error("WebSocket error:", error);
+          },
+        ]);
+      }
+    } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
   }
 

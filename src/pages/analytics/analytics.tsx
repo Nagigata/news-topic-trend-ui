@@ -23,7 +23,7 @@ const generateTopicColors = (topics: string[]) => {
 
 const fetchTrendData = async (month: number, year: number) => {
   const response = await fetch(
-    `https://aacf-2405-4802-a18b-6d80-2dee-66fa-9e24-5dc4.ngrok-free.app/lda/topic-trends/?month=${month}&year=${year}`
+    `http://localhost:8000/lda/topic-trends/?month=${month}&year=${year}`
   );
   const data = await response.json();
   console.log(data);
