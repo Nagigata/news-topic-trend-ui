@@ -20,7 +20,7 @@ export function Chat() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Hủy yêu cầu cũ khi component unmount hoặc khi gửi yêu cầu mới
+  // Cancel previous request when component unmounts or when sending a new request
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -35,7 +35,7 @@ export function Chat() {
     const messageText = text || question;
     if (!messageText.trim()) return;
 
-    // Hủy yêu cầu trước đó nếu có
+    // Cancel previous request if exists
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -43,14 +43,14 @@ export function Chat() {
     setIsLoading(true);
     const traceId = uuidv4();
 
-    // Thêm tin nhắn của người dùng vào danh sách
+    // Add user message to the list
     setMessages((prev) => [
       ...prev,
       { content: messageText, role: "user", id: traceId },
     ]);
     setQuestion("");
 
-    // Tạo AbortController mới cho yêu cầu này
+    // Create new AbortController for this request
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
@@ -60,7 +60,7 @@ export function Chat() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: messageText }),
+        body: JSON.stringify({ question: messageText }),
         signal,
       });
 
@@ -73,7 +73,7 @@ export function Chat() {
         const decoder = new TextDecoder("utf-8");
         let responseText = "";
 
-        // Đọc và xử lý dữ liệu stream
+        // Read and process stream data
         while (true) {
           const { done, value } = await reader.read();
 
@@ -82,9 +82,17 @@ export function Chat() {
           }
 
           const chunk = decoder.decode(value, { stream: true });
-          responseText += chunk;
 
-          // Cập nhật tin nhắn từ bot
+          try {
+            // Process JSON data in chunks
+            const jsonData = JSON.parse(chunk);
+            responseText = jsonData.answer || responseText + chunk;
+          } catch (e) {
+            // If JSON parsing fails, add raw content
+            responseText += chunk;
+          }
+
+          // Update bot message
           setMessages((prev) => {
             const lastMessage = prev[prev.length - 1];
 
@@ -105,7 +113,7 @@ export function Chat() {
         console.log("Fetch aborted");
       } else {
         console.error("API error:", error);
-        // Hiển thị thông báo lỗi cho người dùng
+        // Display error message to user
         setMessages((prev) => [
           ...prev,
           {

@@ -1,19 +1,42 @@
 import { useState } from "react";
 import { ChevronDown, Calendar } from "lucide-react";
 
-// Available months for selection
-export const months = [
-  { value: "1", label: "January 2025" },
-  { value: "2", label: "February 2025" },
-  { value: "3", label: "March 2025" },
-  { value: "4", label: "April 2025" },
-];
-
 interface MonthPickerProps {
   selectedMonth: string;
   onMonthChange: (month: string) => void;
   className?: string;
 }
+
+interface Month {
+  value: string;
+  label: string;
+}
+
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
+const currentMonthIndex = currentDate.getMonth();
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export const months: Month[] = monthNames
+  .slice(0, currentMonthIndex + 1)
+  .map((name, index) => ({
+    value: String(index + 1),
+    label: `${name} ${currentYear}`,
+  }));
 
 export function MonthPicker({
   selectedMonth,

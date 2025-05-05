@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Trending = () => {
   const [activeTab, setActiveTab] = useState("today");
-  // Tạo dữ liệu biểu đồ một lần và lưu trữ
+  // Create chart data once and store
   const chartData = useRef(generateSampleChartData());
 
   return (

@@ -9,6 +9,8 @@ import {
 } from "recharts";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { CustomTooltip } from "./TrendLineChart/CustomTooltip";
+import { CustomLegend } from "./TrendLineChart/CustomLegend";
 
 export interface ChartDataPoint {
   date: string;
@@ -26,65 +28,6 @@ interface LineChartProps {
   isLoading?: boolean;
 }
 
-// Chuyển đổi nhãn chủ đề thành dạng dễ đọc
-const formatTopicName = (topic: string) => {
-  return topic
-    .replace(/_/g, " ")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const fullDate = payload[0]?.payload.fullDate || `April ${label}, 2025`;
-
-    const sortedData = [...payload]
-      .sort((a, b) => b.value - a.value)
-      .map((entry) => ({
-        name: formatTopicName(entry.dataKey.replace("percentages.", "")),
-        color: entry.stroke,
-        percentage: entry.value.toFixed(1),
-      }));
-
-    return (
-      <div className="bg-card p-4 rounded-xl border shadow-lg">
-        <h3 className="font-semibold text-card-foreground mb-2">
-          Statistics for {fullDate}
-        </h3>
-        <p className="text-sm text-muted-foreground mb-3">
-          Distribution by Topic
-        </p>
-        <div className="space-y-2">
-          {sortedData.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between gap-4"
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span className="text-sm text-card-foreground">
-                  {item.name}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-card-foreground">
-                  {item.percentage}%
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
-
 export const LineChart = ({
   data,
   topics,
@@ -98,7 +41,7 @@ export const LineChart = ({
   );
   const [hoveredTopic, setHoveredTopic] = useState<string | null>(null);
 
-  // Xử lý khi không có dữ liệu hoặc đang tải
+  // Handle when there's no data or loading state
   if (isLoading) {
     return (
       <div style={{ height }} className="flex items-center justify-center">
@@ -113,14 +56,12 @@ export const LineChart = ({
   if (data.length === 0 || topics.length === 0) {
     return (
       <div style={{ height }} className="flex items-center justify-center">
-        <p className="text-muted-foreground">
-          Không có dữ liệu xu hướng chủ đề
-        </p>
+        <p className="text-muted-foreground">No topic trend data available</p>
       </div>
     );
   }
 
-  // Chỉ tính toán max dựa trên các chủ đề đang hiển thị
+  // Only calculate max based on currently visible topics
   const maxPercent = Math.max(
     ...data.flatMap((item) =>
       Array.from(visibleTopics).map(
@@ -135,7 +76,7 @@ export const LineChart = ({
   // Generate ticks at 5% intervals
   const ticks = Array.from({ length: yAxisMax / 5 + 1 }, (_, i) => i * 5);
 
-  // Xử lý bật/tắt hiển thị một chủ đề
+  // Handle toggling a topic's visibility
   const toggleTopic = (topic: string) => {
     const newVisibleTopics = new Set(visibleTopics);
     if (newVisibleTopics.has(topic)) {
@@ -146,54 +87,14 @@ export const LineChart = ({
     setVisibleTopics(newVisibleTopics);
   };
 
-  // Hiển thị lại tất cả các chủ đề
+  // Show all topics
   const showAllTopics = () => {
     setVisibleTopics(new Set(topics));
   };
 
-  // Ẩn tất cả các chủ đề
+  // Hide all topics
   const hideAllTopics = () => {
     setVisibleTopics(new Set());
-  };
-
-  // Custom Legend để có thể tương tác
-  const CustomLegend = ({ payload }: any) => {
-    return (
-      <div className="flex flex-wrap gap-3 justify-center mt-2 mb-4">
-        {payload.map((entry: any, index: number) => {
-          const topic = entry.dataKey.replace("percentages.", "");
-          const isVisible = visibleTopics.has(topic);
-          const isHovered = hoveredTopic === topic;
-
-          return (
-            <div
-              key={index}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all ${
-                isVisible
-                  ? "border-2 border-opacity-100"
-                  : "border border-opacity-50 opacity-60"
-              }`}
-              style={{
-                borderColor: entry.color,
-                backgroundColor: isVisible ? `${entry.color}20` : "transparent",
-                transform: isHovered ? "scale(1.05)" : "scale(1)",
-              }}
-              onClick={() => toggleTopic(topic)}
-              onMouseEnter={() => setHoveredTopic(topic)}
-              onMouseLeave={() => setHoveredTopic(null)}
-            >
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: entry.color }}
-              />
-              <span className="text-xs font-medium">
-                {formatTopicName(topic)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    );
   };
 
   return (
@@ -227,7 +128,20 @@ export const LineChart = ({
             axisLine={false}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend content={<CustomLegend />} />
+          <Legend
+            content={
+              <CustomLegend
+                payload={topics.map((topic) => ({
+                  dataKey: `percentages.${topic}`,
+                  color: topicColors[topic] || "#8884d8",
+                }))}
+                visibleTopics={visibleTopics}
+                hoveredTopic={hoveredTopic}
+                onToggleTopic={toggleTopic}
+                onHoverTopic={setHoveredTopic}
+              />
+            }
+          />
           {topics.map((topic) => {
             const isVisible = visibleTopics.has(topic);
             const isHovered = hoveredTopic === topic;

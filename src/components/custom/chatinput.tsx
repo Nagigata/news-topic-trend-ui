@@ -15,14 +15,14 @@ interface ChatInputProps {
 
 const suggestedActions = [
   {
-    title: "Today's Headlines",
-    label: "main events",
-    action: "What are the main events in today's news?",
+    title: "Tin nổi bật hôm nay",
+    label: "sự kiện chính",
+    action: "Cho tôi biết những tin tức nổi bật nhất hôm nay?",
   },
   {
-    title: "Trending Topics",
-    label: "across categories",
-    action: "What topics are trending across different categories today?",
+    title: "Xu hướng thịnh hành",
+    label: "các chủ đề hot",
+    action: "Những từ khóa nào đang xu hướng hiện nay?",
   },
 ];
 
@@ -73,7 +73,7 @@ export const ChatInput = ({
       />
 
       <Textarea
-        placeholder="Ask about news events or trending topics..."
+        placeholder="Hỏi về các sự kiện tin tức hoặc chủ đề thịnh hành..."
         className={cx(
           "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-xl text-base bg-muted"
         )}
@@ -84,7 +84,9 @@ export const ChatInput = ({
             event.preventDefault();
 
             if (isLoading) {
-              toast.error("Please wait for the model to finish its response!");
+              toast.error(
+                "Vui lòng đợi cho đến khi mô hình hoàn thành phản hồi!"
+              );
             } else {
               setShowSuggestions(false);
               onSubmit();

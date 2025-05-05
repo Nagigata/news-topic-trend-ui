@@ -21,16 +21,16 @@ export const Overview = () => {
             <Newspaper size={40} />
           </p>
           <p className="text-lg">
-            Welcome to <strong>News Analysis Assistant</strong>
+            Chào mừng đến với <strong>Trợ lý Phân tích Tin tức</strong>
             <br />
-            Your AI companion for news and trending topics
+            Người bạn AI cho tin tức và chủ đề đang thịnh hành
           </p>
           <div className="text-left space-y-4">
-            <p className="font-medium">I can help you with:</p>
+            <p className="font-medium">Tôi có thể giúp bạn với:</p>
             <ul className="list-disc pl-8 space-y-2">
-              <li>Latest news and events from today's articles</li>
-              <li>Trending topics across different categories</li>
-              <li>Finding related news articles on your topics of interest</li>
+              <li>Tin tức và sự kiện mới nhất từ các bài báo hôm nay</li>
+              <li>Chủ đề đang thịnh hành trên các danh mục khác nhau</li>
+              <li>Tìm kiếm các bài báo liên quan đến chủ đề bạn quan tâm</li>
             </ul>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/custom/header";
-import { ChartDataPoint, LineChart } from "@/components/custom/LineChart";
+import { ChartDataPoint, LineChart } from "@/components/custom/TrendLineChart";
 import { MonthPicker } from "@/components/custom/MonthPicker";
 import {
   KeywordBarChart,
@@ -8,7 +8,7 @@ import {
 } from "@/components/custom/KeywordBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Tạo màu dựa trên hash của topic
+// Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
   const colors: { [key: string]: string } = {};
   topics.forEach((topic, index) => {
@@ -31,7 +31,8 @@ const fetchTrendData = async (month: number, year: number) => {
 };
 
 export const Analytics = () => {
-  const [selectedMonth, setSelectedMonth] = useState("4");
+  const currentMonth = String(new Date().getMonth() + 1);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
   const [keywordsData, setKeywordsData] = useState<{
