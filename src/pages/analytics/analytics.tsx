@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
   const colors: { [key: string]: string } = {};
-  topics.forEach((topic, index) => {
+  topics.forEach((topic) => {
     const hash = topic
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0);

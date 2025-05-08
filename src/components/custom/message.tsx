@@ -77,8 +77,8 @@ export const ThinkingMessage = () => {
           <DotLottieReact
             src={
               isDarkMode
-                ? "src/assets/animations/thinking-light.lottie"
-                : "src/assets/animations/thinking-dark.lottie"
+                ? "/animations/thinking-light.lottie"
+                : "/animations/thinking-dark.lottie"
             }
             loop
             autoplay

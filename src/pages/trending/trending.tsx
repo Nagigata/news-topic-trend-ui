@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Header } from "@/components/custom/header";
 import {
   BarChart,
@@ -13,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Trending = () => {
-  const [activeTab, setActiveTab] = useState("today");
   // Create chart data once and store
   const chartData = useRef(generateSampleChartData());
 
@@ -42,11 +41,7 @@ export const Trending = () => {
           <Card className="mb-6">
             <CardHeader className="pb-2"></CardHeader>
             <CardContent>
-              <Tabs
-                defaultValue="today"
-                onValueChange={setActiveTab}
-                className="w-full"
-              >
+              <Tabs defaultValue="today" className="w-full">
                 <TabsList className="grid grid-cols-4 mb-6">
                   <TabsTrigger value="today" className="text-xs sm:text-sm">
                     Popular Today

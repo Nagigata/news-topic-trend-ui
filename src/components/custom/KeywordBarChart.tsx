@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { KeywordBarChartTabs } from "./KeywordBarChart/KeywordBarChartTabs";
 import { KeywordBarChartTooltip } from "./KeywordBarChart/KeywordBarChartTooltip";
+
 import {
   BarChart,
   Bar,
@@ -78,7 +79,6 @@ export function KeywordBarChart({
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [maxValue, setMaxValue] = useState<number>(50);
-
   // Update selectedTopic when topics change
   useEffect(() => {
     if (
@@ -127,8 +127,10 @@ export function KeywordBarChart({
         </CardHeader>
         <CardContent>
           <div className="h-[400px] flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            <span className="ml-3 text-muted-foreground">Loading data...</span>
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              <p className="text-muted-foreground">Loading data...</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -238,7 +240,7 @@ export function KeywordBarChart({
                           renderCustomizedLabel({ ...props, animationComplete })
                         }
                       />
-                      {chartData.map((entry, index) => (
+                      {chartData.map((_, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={`url(#${gradientId})`}

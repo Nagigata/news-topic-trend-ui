@@ -129,7 +129,7 @@ export function BarChart({ data, height = "400px" }: BarChartProps) {
               stackId="a"
               fill={category.color}
             >
-              {data.map((entry, index) => (
+              {data.map((_, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={category.color}

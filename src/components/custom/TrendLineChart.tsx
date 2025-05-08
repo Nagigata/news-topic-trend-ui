@@ -8,9 +8,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { CustomTooltip } from "./TrendLineChart/CustomTooltip";
 import { CustomLegend } from "./TrendLineChart/CustomLegend";
+import { Loader2 } from "lucide-react";
 
 export interface ChartDataPoint {
   date: string;

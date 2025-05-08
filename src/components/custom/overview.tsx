@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MessageCircle, BotIcon, TrendingUp, Newspaper } from "lucide-react";
+import { BotIcon, TrendingUp, Newspaper } from "lucide-react";
 
 export const Overview = () => {
   return (
