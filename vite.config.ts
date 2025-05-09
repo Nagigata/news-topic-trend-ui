@@ -14,7 +14,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png', 'favicon-96x96.png', 'favicon.svg'],
       manifest: {
-        name: 'Ứng dụng theo dõi xu hướng tin tức báo điện tử',
+        name: 'News Trend Việt Nam',
         short_name: 'Topic Modeling',
         description: 'Ứng dụng phân tích và theo dõi xu hướng tin tức',
         start_url: '/',

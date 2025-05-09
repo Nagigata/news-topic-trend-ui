@@ -54,21 +54,21 @@ To enable offline mode:
 
 1. Build the project:
 
-   ```bash
-   npm run build
-   ```
+```bash
+npm run build
+```
 
 2. Preview the production build locally:
 
-   ```bash
-   npm run serve
-   ```
+```bash
+npm run serve
+```
 
 3. Open the following URL in your browser:
 
-   ```
-   http://localhost:8501
-   ```
+```
+http://localhost:8501
+```
 
 4. Install the app when prompted by the browser.  
    You can also manually install it via the browser menu.
