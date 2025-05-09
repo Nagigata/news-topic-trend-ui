@@ -10,7 +10,7 @@ import { Overview } from "@/components/custom/overview";
 import { Header } from "@/components/custom/header";
 import { v4 as uuidv4 } from "uuid";
 
-const API_URL = "http://localhost:8000/chat";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}/chat`;
 
 export function Chat() {
   const [messagesContainerRef, messagesEndRef] =
@@ -59,6 +59,7 @@ export function Chat() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
         },
         body: JSON.stringify({ question: messageText }),
         signal,

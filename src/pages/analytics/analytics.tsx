@@ -23,7 +23,14 @@ const generateTopicColors = (topics: string[]) => {
 
 const fetchTrendData = async (month: number, year: number) => {
   const response = await fetch(
-    `http://localhost:8000/lda/topic-trends/?month=${month}&year=${year}`
+    `${
+      import.meta.env.VITE_BASE_API_URL
+    }/lda/topic-trends/?month=${month}&year=${year}`,
+    {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    }
   );
   const data = await response.json();
   console.log(data);
