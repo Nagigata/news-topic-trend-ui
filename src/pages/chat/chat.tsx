@@ -74,36 +74,25 @@ export function Chat() {
         const decoder = new TextDecoder("utf-8");
         let responseText = "";
 
-        // Read and process stream data
+        // Đọc và xử lý dữ liệu stream
         while (true) {
           const { done, value } = await reader.read();
-
           if (done) {
+            console.log("Toàn bộ câu trả lời từ API:", responseText);
             break;
           }
-
           const chunk = decoder.decode(value, { stream: true });
           console.log("Chunk nhận được từ API:", chunk);
+          responseText += chunk;
 
-          try {
-            // Process JSON data in chunks
-            const jsonData = JSON.parse(chunk);
-            responseText = jsonData.answer || responseText + chunk;
-          } catch (e) {
-            // If JSON parsing fails, add raw content
-            responseText += chunk;
-          }
-
-          // Update bot message
+          // Cập nhật message bot
           setMessages((prev) => {
             const lastMessage = prev[prev.length - 1];
-
             const newMessage = {
               content: responseText,
               role: "assistant",
               id: traceId,
             };
-
             return lastMessage?.role === "assistant"
               ? [...prev.slice(0, -1), newMessage]
               : [...prev, newMessage];
