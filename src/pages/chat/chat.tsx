@@ -18,6 +18,7 @@ export function Chat() {
   const [messages, setMessages] = useState<message[]>([]);
   const [question, setQuestion] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasReceivedChunk, setHasReceivedChunk] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Cancel previous request when component unmounts or when sending a new request
@@ -84,6 +85,11 @@ export function Chat() {
           const chunk = decoder.decode(value, { stream: true });
           responseText += chunk;
 
+          // Cập nhật state khi nhận được chunk đầu tiên
+          if (!hasReceivedChunk) {
+            setHasReceivedChunk(true);
+          }
+
           // Cập nhật message bot mỗi khi nhận được chunk mới
           setMessages((prev) => {
             const lastMessage = prev[prev.length - 1];
@@ -131,7 +137,7 @@ export function Chat() {
         {messages.map((message, index) => (
           <PreviewMessage key={index} message={message} />
         ))}
-        {isLoading && <ThinkingMessage />}
+        {isLoading && !hasReceivedChunk && <ThinkingMessage />}
         <div
           ref={messagesEndRef}
           className="shrink-0 min-w-[24px] min-h-[24px]"

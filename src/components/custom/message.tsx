@@ -5,7 +5,6 @@ import { SparklesIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { message } from "../../interfaces/interfaces";
 import { MessageActions } from "@/components/custom/actions";
-// import { TypingEffect } from "./typing-effect";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { facts } from "@/data/facts";
 import { useTheme } from "@/context/ThemeContext";
