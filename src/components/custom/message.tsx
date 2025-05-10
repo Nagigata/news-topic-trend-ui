@@ -32,11 +32,7 @@ export const PreviewMessage = ({ message }: { message: message }) => {
         <div className="flex flex-col w-full">
           {message.content && (
             <div className="flex flex-col gap-4 text-left">
-              {message.role === "assistant" ? (
-                <TypingEffect text={message.content} />
-              ) : (
-                <Markdown>{message.content}</Markdown>
-              )}
+              <Markdown>{message.content}</Markdown>
             </div>
           )}
 
