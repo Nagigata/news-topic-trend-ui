@@ -32,6 +32,7 @@ const fetchTrendData = async (month: number, year: number) => {
       },
     }
   );
+
   const data = await response.json();
   console.log(data);
   return data;

@@ -83,6 +83,7 @@ export function Chat() {
           }
 
           const chunk = decoder.decode(value, { stream: true });
+          console.log("Chunk nhận được từ API:", chunk);
 
           try {
             // Process JSON data in chunks
