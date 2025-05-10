@@ -18,10 +18,8 @@ export function Chat() {
   const [messages, setMessages] = useState<message[]>([]);
   const [question, setQuestion] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [streamedResponse, setStreamedResponse] = useState("");
   const [hasReceivedChunk, setHasReceivedChunk] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const traceIdRef = useRef<string>("");
 
   // Cancel previous request when component unmounts or when sending a new request
   useEffect(() => {
@@ -35,9 +33,8 @@ export function Chat() {
   async function handleSubmit(text?: string) {
     if (isLoading) return;
 
-    // Reset streaming state when starting a new question
+    // Reset hasReceivedChunk khi bắt đầu câu hỏi mới
     setHasReceivedChunk(false);
-    setStreamedResponse("");
 
     const messageText = text || question;
     if (!messageText.trim()) return;
@@ -48,12 +45,12 @@ export function Chat() {
     }
 
     setIsLoading(true);
-    traceIdRef.current = uuidv4();
+    const traceId = uuidv4();
 
     // Add user message to the list
     setMessages((prev) => [
       ...prev,
-      { content: messageText, role: "user", id: traceIdRef.current },
+      { content: messageText, role: "user", id: traceId },
     ]);
     setQuestion("");
 
@@ -79,44 +76,35 @@ export function Chat() {
       if (response.body) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
+        let responseText = "";
 
-        // Process the stream data
+        // Đọc và xử lý dữ liệu stream
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            console.log("Complete response from API:", streamedResponse);
+            console.log("Toàn bộ câu trả lời từ API:", responseText);
             break;
           }
-
           const chunk = decoder.decode(value, { stream: true });
+          responseText += chunk;
 
-          // Update state when receiving the first chunk
+          // Cập nhật state khi nhận được chunk đầu tiên
           if (!hasReceivedChunk) {
             setHasReceivedChunk(true);
-            // Add initial assistant message
-            setMessages((prev) => [
-              ...prev,
-              { content: chunk, role: "assistant", id: traceIdRef.current },
-            ]);
-          } else {
-            // Update the existing message with accumulated text
-            setStreamedResponse((prev) => {
-              const newText = prev + chunk;
-              // Update the assistant message
-              setMessages((messages) => {
-                return messages.map((msg) => {
-                  if (
-                    msg.id === traceIdRef.current &&
-                    msg.role === "assistant"
-                  ) {
-                    return { ...msg, content: newText };
-                  }
-                  return msg;
-                });
-              });
-              return newText;
-            });
           }
+
+          // Cập nhật message bot mỗi khi nhận được chunk mới
+          setMessages((prev) => {
+            const lastMessage = prev[prev.length - 1];
+            const newMessage = {
+              content: responseText,
+              role: "assistant",
+              id: traceId,
+            };
+            return lastMessage?.role === "assistant"
+              ? [...prev.slice(0, -1), newMessage]
+              : [...prev, newMessage];
+          });
         }
       }
     } catch (error) {
@@ -131,7 +119,7 @@ export function Chat() {
             content:
               "Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.",
             role: "assistant",
-            id: traceIdRef.current,
+            id: traceId,
           },
         ]);
       }
