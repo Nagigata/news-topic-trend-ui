@@ -33,6 +33,9 @@ export function Chat() {
   async function handleSubmit(text?: string) {
     if (isLoading) return;
 
+    // Reset hasReceivedChunk khi bắt đầu câu hỏi mới
+    setHasReceivedChunk(false);
+
     const messageText = text || question;
     if (!messageText.trim()) return;
 
@@ -122,6 +125,7 @@ export function Chat() {
       }
     } finally {
       setIsLoading(false);
+      setHasReceivedChunk(false);
       abortControllerRef.current = null;
     }
   }
