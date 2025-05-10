@@ -79,24 +79,22 @@ export function Chat() {
           const { done, value } = await reader.read();
           if (done) {
             console.log("Toàn bộ câu trả lời từ API:", responseText);
+            // Chỉ cập nhật message bot khi đã nhận xong toàn bộ dữ liệu
+            setMessages((prev) => {
+              const lastMessage = prev[prev.length - 1];
+              const newMessage = {
+                content: responseText,
+                role: "assistant",
+                id: traceId,
+              };
+              return lastMessage?.role === "assistant"
+                ? [...prev.slice(0, -1), newMessage]
+                : [...prev, newMessage];
+            });
             break;
           }
           const chunk = decoder.decode(value, { stream: true });
-          console.log("Chunk nhận được từ API:", chunk);
           responseText += chunk;
-
-          // Cập nhật message bot
-          setMessages((prev) => {
-            const lastMessage = prev[prev.length - 1];
-            const newMessage = {
-              content: responseText,
-              role: "assistant",
-              id: traceId,
-            };
-            return lastMessage?.role === "assistant"
-              ? [...prev.slice(0, -1), newMessage]
-              : [...prev, newMessage];
-          });
         }
       }
     } catch (error) {
