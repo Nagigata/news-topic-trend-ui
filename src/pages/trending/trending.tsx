@@ -1,9 +1,9 @@
-import { useRef } from "react";
+// import { useRef } from "react";
 import { Header } from "@/components/custom/header";
-import {
-  BarChart,
-  generateSampleChartData,
-} from "@/components/custom/BarChart";
+// import {
+//   BarChart,
+//   generateSampleChartData,
+// } from "@/components/custom/BarChart";
 import {
   RankingList,
   topArticles,
@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Trending = () => {
   // Create chart data once and store
-  const chartData = useRef(generateSampleChartData());
+  // const chartData = useRef(generateSampleChartData());
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -22,24 +22,28 @@ export const Trending = () => {
       <div className="flex-1 p-6 overflow-auto">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-foreground">
-              Content Discovery
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">
+                Content Discovery
+              </h1>
+            </div>
           </div>
 
           {/* Bar Chart Component */}
-          <Card className="mb-6">
+          {/* <Card className="mb-6">
             <CardHeader className="pb-6">
               <CardTitle>Topic distribution over time</CardTitle>
             </CardHeader>
             <CardContent>
               <BarChart data={chartData.current} height="400px" />
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Ranking List Component */}
           <Card className="mb-6">
-            <CardHeader className="pb-2"></CardHeader>
+            <CardHeader className="pb-2">
+              <CardTitle>Content Ranking</CardTitle>
+            </CardHeader>
             <CardContent>
               <Tabs defaultValue="today" className="w-full">
                 <TabsList className="grid grid-cols-4 mb-6">

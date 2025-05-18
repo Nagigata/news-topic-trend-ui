@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/custom/header";
 import { ChartDataPoint, LineChart } from "@/components/custom/TrendLineChart";
-import { MonthPicker } from "@/components/custom/MonthPicker";
+import { TimeRangePicker } from "@/components/custom/TimeRangePicker";
+import {
+  TimeRangeSelect,
+  TimeRange,
+} from "@/components/custom/TimeRangeSelect";
 import {
   KeywordBarChart,
   KeywordItem,
 } from "@/components/custom/KeywordBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { startOfWeek, format } from "date-fns";
 
 // Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
@@ -40,7 +45,8 @@ const fetchTrendData = async (month: number, year: number) => {
 
 export const Analytics = () => {
   const currentMonth = String(new Date().getMonth() + 1);
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedTime, setSelectedTime] = useState(currentMonth);
+  const [timeRange, setTimeRange] = useState<TimeRange>("month");
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [topics, setTopics] = useState<string[]>([]);
   const [keywordsData, setKeywordsData] = useState<{
@@ -53,7 +59,7 @@ export const Analytics = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchTrendData(parseInt(selectedMonth), 2025);
+        const data = await fetchTrendData(parseInt(selectedTime), 2025);
         setChartData(data.data);
         setTopics(data.topics);
         setTopicColors(generateTopicColors(data.topics));
@@ -66,10 +72,27 @@ export const Analytics = () => {
     };
 
     fetchData();
-  }, [selectedMonth]);
+  }, [selectedTime, timeRange]);
 
-  const handleMonthChange = (month: string) => {
-    setSelectedMonth(month);
+  const handleTimeChange = (time: string) => {
+    setSelectedTime(time);
+  };
+
+  const handleTimeRangeChange = (range: TimeRange) => {
+    setTimeRange(range);
+
+    // Tính toán giá trị mặc định dựa trên loại khoảng thời gian
+    if (range === "week") {
+      const currentDate = new Date();
+      const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+      setSelectedTime(format(weekStart, "yyyy-MM-dd"));
+    } else if (range === "month") {
+      setSelectedTime(String(new Date().getMonth() + 1));
+    } else if (range === "quarter") {
+      setSelectedTime(String(Math.floor(new Date().getMonth() / 3) + 1));
+    } else if (range === "year") {
+      setSelectedTime(String(new Date().getFullYear()));
+    }
   };
 
   return (
@@ -82,10 +105,17 @@ export const Analytics = () => {
               Analytics Dashboard
             </h1>
 
-            <MonthPicker
-              selectedMonth={selectedMonth}
-              onMonthChange={handleMonthChange}
-            />
+            <div className="flex gap-4">
+              <TimeRangeSelect
+                selectedRange={timeRange}
+                onRangeChange={handleTimeRangeChange}
+              />
+              <TimeRangePicker
+                selectedTime={selectedTime}
+                onTimeChange={handleTimeChange}
+                timeRange={timeRange}
+              />
+            </div>
           </div>
 
           {/* Line Chart in Card */}
