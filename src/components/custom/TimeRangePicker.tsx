@@ -75,7 +75,7 @@ const getTimeOptions = (timeRange: TimeRange): TimeOption[] => {
 
     case "month":
       return monthNames.slice(0, currentMonthIndex + 1).map((name, index) => ({
-        value: String(index + 1),
+        value: `${index + 1}-${currentYear}`,
         label: `${name} ${currentYear}`,
       }));
 
@@ -84,7 +84,7 @@ const getTimeOptions = (timeRange: TimeRange): TimeOption[] => {
       const currentQuarter = Math.floor(currentMonthIndex / 3) + 1;
       for (let i = 1; i <= currentQuarter; i++) {
         quarters.push({
-          value: String(i),
+          value: `${i}-${currentYear}`,
           label: `Quý ${i} ${currentYear}`,
         });
       }

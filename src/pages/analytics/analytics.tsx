@@ -11,7 +11,7 @@ import {
   KeywordItem,
 } from "@/components/custom/KeywordBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { startOfWeek, format } from "date-fns";
+import { startOfWeek, endOfWeek, format, parseISO } from "date-fns";
 
 // Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
@@ -26,25 +26,59 @@ const generateTopicColors = (topics: string[]) => {
   return colors;
 };
 
-const fetchTrendData = async (month: number, year: number) => {
-  const response = await fetch(
-    `${
-      import.meta.env.VITE_BASE_API_URL
-    }/lda/topic-trends/?month=${month}&year=${year}`,
-    {
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-      },
-    }
-  );
+const fetchTrendData = async (timeRange: TimeRange, selectedTime: string) => {
+  const baseUrl = import.meta.env.VITE_BASE_API_URL;
+  let url = "";
+  const params = new URLSearchParams();
+
+  switch (timeRange) {
+    case "week":
+      url = `${baseUrl}/lda/topic-trends-week`;
+      const startDate = format(parseISO(selectedTime), "yyyy-MM-dd");
+      const endDate = format(
+        endOfWeek(parseISO(selectedTime), { weekStartsOn: 1 }),
+        "yyyy-MM-dd"
+      );
+      params.append("start_date", startDate);
+      params.append("end_date", endDate);
+      break;
+
+    case "month":
+      url = `${baseUrl}/lda/topic-trends-month`;
+      const [month, year] = selectedTime.split("-");
+      params.append("month", month);
+      params.append("year", year);
+      break;
+
+    case "quarter":
+      url = `${baseUrl}/lda/topic-trends-quarter`;
+      const [quarter, quarterYear] = selectedTime.split("-");
+      params.append("quarter", quarter);
+      params.append("year", quarterYear);
+      break;
+
+    case "year":
+      url = `${baseUrl}/lda/topic-trends-year`;
+      params.append("year", selectedTime);
+      break;
+  }
+
+  const response = await fetch(`${url}?${params.toString()}`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
 
   const data = await response.json();
-  console.log(data);
+  console.log("API Response:", data);
   return data;
 };
 
 export const Analytics = () => {
-  const currentMonth = String(new Date().getMonth() + 1);
+  const currentDate = new Date();
+  const currentMonth = `${
+    currentDate.getMonth() + 1
+  }-${currentDate.getFullYear()}`;
   const [selectedTime, setSelectedTime] = useState(currentMonth);
   const [timeRange, setTimeRange] = useState<TimeRange>("month");
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
@@ -59,7 +93,7 @@ export const Analytics = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchTrendData(parseInt(selectedTime), 2025);
+        const data = await fetchTrendData(timeRange, selectedTime);
         setChartData(data.data);
         setTopics(data.topics);
         setTopicColors(generateTopicColors(data.topics));
@@ -82,16 +116,24 @@ export const Analytics = () => {
     setTimeRange(range);
 
     // Tính toán giá trị mặc định dựa trên loại khoảng thời gian
-    if (range === "week") {
-      const currentDate = new Date();
-      const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-      setSelectedTime(format(weekStart, "yyyy-MM-dd"));
-    } else if (range === "month") {
-      setSelectedTime(String(new Date().getMonth() + 1));
-    } else if (range === "quarter") {
-      setSelectedTime(String(Math.floor(new Date().getMonth() / 3) + 1));
-    } else if (range === "year") {
-      setSelectedTime(String(new Date().getFullYear()));
+    const currentDate = new Date();
+    switch (range) {
+      case "week":
+        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        setSelectedTime(format(weekStart, "yyyy-MM-dd"));
+        break;
+      case "month":
+        setSelectedTime(
+          `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`
+        );
+        break;
+      case "quarter":
+        const quarter = Math.floor(currentDate.getMonth() / 3) + 1;
+        setSelectedTime(`${quarter}-${currentDate.getFullYear()}`);
+        break;
+      case "year":
+        setSelectedTime(String(currentDate.getFullYear()));
+        break;
     }
   };
 
