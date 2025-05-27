@@ -67,12 +67,9 @@
   }
 }
 @layer base {
-  @font-face {
-    font-family: "geist";
-    src: url(./assets/fonts/geist.woff2) format("woff2");
-  }
   * {
     @apply border-border;
+    font-family: "Be Vietnam Pro", system-ui, sans-serif;
   }
   body {
     @apply bg-background text-foreground;

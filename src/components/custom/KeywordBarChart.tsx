@@ -123,13 +123,13 @@ export function KeywordBarChart({
     return (
       <Card className={className}>
         <CardHeader className="pb-4">
-          <CardTitle>Top Keywords by Topic</CardTitle>
+          <CardTitle>Từ khóa hàng đầu</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[400px] flex items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-              <p className="text-muted-foreground">Loading data...</p>
+              <p className="text-muted-foreground">Đang tải dữ liệu...</p>
             </div>
           </div>
         </CardContent>
@@ -140,7 +140,7 @@ export function KeywordBarChart({
   return (
     <Card className={className}>
       <CardHeader className="pb-4">
-        <CardTitle>Top Keywords by Topic</CardTitle>
+        <CardTitle>Từ khóa hàng đầu</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs
@@ -184,7 +184,7 @@ export function KeywordBarChart({
             <div className="h-[400px] w-full">
               {chartData.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-muted-foreground">
-                  There is no keyword data for this topic.
+                  Không có dữ liệu từ khóa cho chủ đề này.
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
@@ -264,7 +264,7 @@ export function KeywordBarChart({
             </div>
           ) : (
             <div className="h-[400px] flex flex-col items-center justify-center text-muted-foreground">
-              <p className="mb-3">Please select a topic to view keywords</p>
+              <p className="mb-3">Vui lòng chọn một chủ đề để xem từ khóa</p>
               <div className="flex gap-2 flex-wrap justify-center">
                 {topics.slice(0, 3).map((topic) => (
                   <Button

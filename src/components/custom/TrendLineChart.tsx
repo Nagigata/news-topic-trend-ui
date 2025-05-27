@@ -47,7 +47,7 @@ export const LineChart = ({
       <div style={{ height }} className="flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-          <p className="text-muted-foreground">Loading data...</p>
+          <p className="text-muted-foreground">Đang tải dữ liệu...</p>
         </div>
       </div>
     );
@@ -56,7 +56,9 @@ export const LineChart = ({
   if (data.length === 0 || topics.length === 0) {
     return (
       <div style={{ height }} className="flex items-center justify-center">
-        <p className="text-muted-foreground">No topic trend data available</p>
+        <p className="text-muted-foreground">
+          Không có dữ liệu xu hướng chủ đề
+        </p>
       </div>
     );
   }

@@ -102,7 +102,7 @@ export const Analytics = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <h1 className="text-2xl font-bold text-foreground">
-              Analytics Dashboard
+              Thống kê phân tích
             </h1>
 
             <div className="flex gap-4">
@@ -121,7 +121,7 @@ export const Analytics = () => {
           {/* Line Chart in Card */}
           <Card className="mb-6">
             <CardHeader className="pb-6">
-              <CardTitle>Monthly Topic Trends</CardTitle>
+              <CardTitle>Xu hướng chủ đề</CardTitle>
             </CardHeader>
             <CardContent>
               <LineChart

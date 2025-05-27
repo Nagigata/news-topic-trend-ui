@@ -109,7 +109,7 @@ export function TimeRangePicker({
   selectedTime,
   onTimeChange,
   timeRange,
-  className = "w-full sm:w-64",
+  className = "w-full sm:w-72",
 }: TimeRangePickerProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const timeOptions = getTimeOptions(timeRange);
