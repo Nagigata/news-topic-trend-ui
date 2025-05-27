@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cx } from "classix";
 import { SparklesIcon } from "./icons";
@@ -6,7 +5,6 @@ import { Markdown } from "./markdown";
 import { message } from "../../interfaces/interfaces";
 import { MessageActions } from "@/components/custom/actions";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { facts } from "@/data/facts";
 import { useTheme } from "@/context/ThemeContext";
 
 export const PreviewMessage = ({ message }: { message: message }) => {
@@ -44,13 +42,7 @@ export const PreviewMessage = ({ message }: { message: message }) => {
 
 export const ThinkingMessage = () => {
   const role = "assistant";
-  const [currentFact, setCurrentFact] = useState("");
   const { isDarkMode } = useTheme();
-
-  useEffect(() => {
-    const randomFact = facts[Math.floor(Math.random() * facts.length)];
-    setCurrentFact(randomFact);
-  }, []);
 
   return (
     <motion.div
@@ -79,17 +71,8 @@ export const ThinkingMessage = () => {
             autoplay
             className="w-16 h-16"
           />
+          <span className="text-sm text-muted-foreground">Đang xử lý...</span>
         </div>
-        {currentFact && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="text-sm text-muted-foreground italic pl-12"
-          >
-            {currentFact}
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );
