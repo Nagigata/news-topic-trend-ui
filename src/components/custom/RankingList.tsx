@@ -1,10 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, TrendingUp } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // Interfaces for different item types
+export interface Paper {
+  source: string;
+  url: string;
+  title: string;
+}
+
 export interface PopularTopic {
   topic_name: string;
   count: number;
+  papers: Paper[];
 }
 
 export interface HotKeyword {
@@ -22,6 +34,8 @@ export function RankingList<T extends PopularTopic | HotKeyword>({
   items,
   type,
 }: RankingListProps<T>) {
+  const limitedItems = items.slice(0, 5);
+
   // Render function for each item type
   const renderItem = (item: T, index: number) => {
     if (type === "popular") {
@@ -45,10 +59,35 @@ export function RankingList<T extends PopularTopic | HotKeyword>({
             </div>
           </div>
 
-          <div className="flex items-center gap-1 text-sm text-muted-foreground ml-4">
-            <TrendingUp className="h-3 w-3" />
-            {topic.count.toLocaleString()} bài báo
-          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex items-center gap-1 text-sm text-muted-foreground ml-4 cursor-pointer hover:text-primary">
+                <TrendingUp className="h-3 w-3" />
+                {topic.count.toLocaleString()} bài báo
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm">Danh sách bài báo</h4>
+                <div className="space-y-2">
+                  {topic.papers.map((paper, idx) => (
+                    <a
+                      key={idx}
+                      href={paper.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-2 rounded-md hover:bg-accent"
+                    >
+                      <div className="text-sm font-medium">{paper.title}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {paper.source}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </Button>
       );
     } else {
@@ -88,7 +127,7 @@ export function RankingList<T extends PopularTopic | HotKeyword>({
 
   return (
     <div className="space-y-2">
-      {items.map((item, index) => renderItem(item, index))}
+      {limitedItems.map((item, index) => renderItem(item, index))}
     </div>
   );
 }
