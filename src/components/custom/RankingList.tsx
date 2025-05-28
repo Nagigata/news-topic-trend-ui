@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, TrendingUp } from "lucide-react";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Interfaces for different item types
 export interface Paper {
@@ -59,35 +61,39 @@ export function RankingList<T extends PopularTopic | HotKeyword>({
             </div>
           </div>
 
-          <Popover>
-            <PopoverTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <div className="flex items-center gap-1 text-sm text-muted-foreground ml-4 cursor-pointer hover:text-primary">
                 <TrendingUp className="h-3 w-3" />
                 {topic.count.toLocaleString()} bài báo
               </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm">Danh sách bài báo</h4>
-                <div className="space-y-2">
-                  {topic.papers.map((paper, idx) => (
-                    <a
-                      key={idx}
-                      href={paper.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block p-2 rounded-md hover:bg-accent"
-                    >
-                      <div className="text-sm font-medium">{paper.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {paper.source}
-                      </div>
-                    </a>
-                  ))}
-                </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>
+                  Danh sách bài báo về {topic.topic_name}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                {topic.papers.map((paper, idx) => (
+                  <a
+                    key={idx}
+                    href={paper.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-4 rounded-lg border hover:bg-accent transition-colors"
+                  >
+                    <div className="text-base font-medium mb-1">
+                      {paper.title}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Nguồn: {paper.source}
+                    </div>
+                  </a>
+                ))}
               </div>
-            </PopoverContent>
-          </Popover>
+            </DialogContent>
+          </Dialog>
         </Button>
       );
     } else {
