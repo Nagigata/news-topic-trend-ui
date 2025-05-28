@@ -30,14 +30,14 @@ export const Header = () => {
             Analytics
           </Link>
           <Link
-            to="/trending"
+            to="/discovers"
             className={`px-3 py-2 rounded-md ${
-              location.pathname === "/trending"
+              location.pathname === "/discovers"
                 ? "bg-accent"
                 : "hover:bg-accent"
             }`}
           >
-            Discover
+            Discovers
           </Link>
         </nav>
       </header>

@@ -50,8 +50,9 @@ const getWeeks = (): TimeOption[] => {
 
   let weekStart = firstWeekStart;
   const currentWeekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const lastWeekStart = addWeeks(currentWeekStart, -1); // Lấy tuần trước tuần hiện tại
 
-  while (weekStart <= currentWeekStart) {
+  while (weekStart <= lastWeekStart) {
     const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
     const weekNumber = getWeek(weekStart, { weekStartsOn: 1 });
 

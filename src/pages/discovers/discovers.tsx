@@ -7,8 +7,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export const Trending = () => {
+export const Discovers = () => {
   const [todayTopics, setTodayTopics] = useState<PopularTopic[]>([]);
   const [weekTopics, setWeekTopics] = useState<PopularTopic[]>([]);
   const [monthTopics, setMonthTopics] = useState<PopularTopic[]>([]);
@@ -65,7 +66,7 @@ export const Trending = () => {
 
           {/* Ranking List Component */}
           <Card className="mb-6">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-6">
               <CardTitle>Xếp hạng nội dung</CardTitle>
             </CardHeader>
             <CardContent>
@@ -87,28 +88,48 @@ export const Trending = () => {
 
                 <TabsContent value="today">
                   {loading ? (
-                    <div>Đang tải dữ liệu...</div>
+                    <div className="flex flex-col items-center gap-3 py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Đang tải dữ liệu...
+                      </p>
+                    </div>
                   ) : (
                     <RankingList items={todayTopics} type="popular" />
                   )}
                 </TabsContent>
                 <TabsContent value="week">
                   {loading ? (
-                    <div>Đang tải dữ liệu...</div>
+                    <div className="flex flex-col items-center gap-3 py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Đang tải dữ liệu...
+                      </p>
+                    </div>
                   ) : (
                     <RankingList items={weekTopics} type="popular" />
                   )}
                 </TabsContent>
                 <TabsContent value="month">
                   {loading ? (
-                    <div>Đang tải dữ liệu...</div>
+                    <div className="flex flex-col items-center gap-3 py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Đang tải dữ liệu...
+                      </p>
+                    </div>
                   ) : (
                     <RankingList items={monthTopics} type="popular" />
                   )}
                 </TabsContent>
                 <TabsContent value="trending">
                   {loading ? (
-                    <div>Đang tải dữ liệu...</div>
+                    <div className="flex flex-col items-center gap-3 py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Đang tải dữ liệu...
+                      </p>
+                    </div>
                   ) : (
                     <RankingList items={hotKeywords} type="hot" />
                   )}

@@ -11,7 +11,7 @@ import {
   KeywordItem,
 } from "@/components/custom/KeywordBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { startOfWeek, endOfWeek, format, parseISO } from "date-fns";
+import { startOfWeek, endOfWeek, format, parseISO, addWeeks } from "date-fns";
 
 // Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
@@ -116,8 +116,9 @@ export const Analytics = () => {
     const currentDate = new Date();
     switch (range) {
       case "week":
-        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-        setSelectedTime(format(weekStart, "yyyy-MM-dd"));
+        const currentWeekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+        const lastWeekStart = addWeeks(currentWeekStart, -1);
+        setSelectedTime(format(lastWeekStart, "yyyy-MM-dd"));
         break;
       case "month":
         setSelectedTime(

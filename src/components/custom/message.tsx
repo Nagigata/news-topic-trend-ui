@@ -61,17 +61,25 @@ export const ThinkingMessage = () => {
           <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
             <SparklesIcon size={14} />
           </div>
-          <DotLottieReact
-            src={
-              isDarkMode
-                ? "/animations/thinking-light.lottie"
-                : "/animations/thinking-dark.lottie"
-            }
-            loop
-            autoplay
-            className="w-16 h-16"
-          />
-          <span className="text-sm text-muted-foreground">Đang xử lý...</span>
+          <div className="flex items-center gap-2">
+            <DotLottieReact
+              src={
+                isDarkMode
+                  ? "/animations/thinking-light.lottie"
+                  : "/animations/thinking-dark.lottie"
+              }
+              loop
+              autoplay
+              className="w-12 h-12"
+            />
+            <motion.span
+              className="text-sm font-medium bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              Đang phân tích dữ liệu...
+            </motion.span>
+          </div>
         </div>
       </div>
     </motion.div>
