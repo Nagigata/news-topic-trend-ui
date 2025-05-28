@@ -1,20 +1,54 @@
-// import { useRef } from "react";
 import { Header } from "@/components/custom/header";
-// import {
-//   BarChart,
-//   generateSampleChartData,
-// } from "@/components/custom/BarChart";
 import {
   RankingList,
-  topArticles,
-  trendingTopics,
+  PopularTopic,
+  HotKeyword,
 } from "@/components/custom/RankingList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
 
 export const Trending = () => {
-  // Create chart data once and store
-  // const chartData = useRef(generateSampleChartData());
+  const [todayTopics, setTodayTopics] = useState<PopularTopic[]>([]);
+  const [weekTopics, setWeekTopics] = useState<PopularTopic[]>([]);
+  const [monthTopics, setMonthTopics] = useState<PopularTopic[]>([]);
+  const [hotKeywords, setHotKeywords] = useState<HotKeyword[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const baseUrl = import.meta.env.VITE_BASE_API_URL;
+        const [todayRes, weekRes, monthRes, hotRes] = await Promise.all([
+          fetch(`${baseUrl}/lda/popular-topics-today/`),
+          fetch(`${baseUrl}/lda/popular-topics-this-week/`),
+          fetch(`${baseUrl}/lda/popular-topics-this-month/`),
+          fetch(`${baseUrl}/lda/hot-keywords`),
+        ]);
+
+        const [todayData, weekData, monthData, hotData] = await Promise.all([
+          todayRes.json(),
+          weekRes.json(),
+          monthRes.json(),
+          hotRes.json(),
+        ]);
+
+        setTodayTopics(todayData.results);
+        setWeekTopics(weekData.results);
+        setMonthTopics(monthData.results);
+
+        // Convert hot keywords response to array
+        const hotKeywordsArray = Object.values(hotData.results) as HotKeyword[];
+        setHotKeywords(hotKeywordsArray);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -24,54 +58,60 @@ export const Trending = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <div>
               <h1 className="text-2xl font-bold text-foreground">
-                Content Discovery
+                Khám phá nội dung
               </h1>
             </div>
           </div>
 
-          {/* Bar Chart Component */}
-          {/* <Card className="mb-6">
-            <CardHeader className="pb-6">
-              <CardTitle>Topic distribution over time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BarChart data={chartData.current} height="400px" />
-            </CardContent>
-          </Card> */}
-
           {/* Ranking List Component */}
           <Card className="mb-6">
             <CardHeader className="pb-2">
-              <CardTitle>Content Ranking</CardTitle>
+              <CardTitle>Xếp hạng nội dung</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="today" className="w-full">
                 <TabsList className="grid grid-cols-4 mb-6">
                   <TabsTrigger value="today" className="text-xs sm:text-sm">
-                    Popular Today
+                    Phổ biến hôm nay
                   </TabsTrigger>
                   <TabsTrigger value="week" className="text-xs sm:text-sm">
-                    Popular This Week
+                    Phổ biến tuần này
                   </TabsTrigger>
                   <TabsTrigger value="month" className="text-xs sm:text-sm">
-                    Popular This Month
+                    Phổ biến tháng này
                   </TabsTrigger>
                   <TabsTrigger value="trending" className="text-xs sm:text-sm">
-                    Hot Keywords
+                    Từ khóa nổi bật
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="today">
-                  <RankingList items={topArticles} type="article" />
+                  {loading ? (
+                    <div>Đang tải dữ liệu...</div>
+                  ) : (
+                    <RankingList items={todayTopics} type="popular" />
+                  )}
                 </TabsContent>
                 <TabsContent value="week">
-                  <RankingList items={topArticles} type="article" />
+                  {loading ? (
+                    <div>Đang tải dữ liệu...</div>
+                  ) : (
+                    <RankingList items={weekTopics} type="popular" />
+                  )}
                 </TabsContent>
                 <TabsContent value="month">
-                  <RankingList items={topArticles} type="article" />
+                  {loading ? (
+                    <div>Đang tải dữ liệu...</div>
+                  ) : (
+                    <RankingList items={monthTopics} type="popular" />
+                  )}
                 </TabsContent>
                 <TabsContent value="trending">
-                  <RankingList items={trendingTopics} type="topic" />
+                  {loading ? (
+                    <div>Đang tải dữ liệu...</div>
+                  ) : (
+                    <RankingList items={hotKeywords} type="hot" />
+                  )}
                 </TabsContent>
               </Tabs>
             </CardContent>

@@ -52,7 +52,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/.*\.ngrok-free\.app/,
+            urlPattern: /^https?./,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
