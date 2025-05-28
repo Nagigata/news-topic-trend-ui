@@ -65,7 +65,13 @@ const fetchTrendData = async (timeRange: TimeRange, selectedTime: string) => {
 
   const fullUrl = `${url}?${params.toString()}`;
 
-  const response = await fetch(fullUrl);
+  const response = await fetch(fullUrl, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+      "Content-Type": "application/json",
+    },
+    mode: "cors",
+  });
   const data = await response.json();
   console.log("API Response:", data);
   return data;

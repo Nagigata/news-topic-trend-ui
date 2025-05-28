@@ -20,11 +20,19 @@ export const Discovers = () => {
     const fetchData = async () => {
       try {
         const baseUrl = import.meta.env.VITE_BASE_API_URL;
+        const fetchOptions: RequestInit = {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+            "Content-Type": "application/json",
+          },
+          mode: "cors" as RequestMode,
+        };
+
         const [todayRes, weekRes, monthRes, hotRes] = await Promise.all([
-          fetch(`${baseUrl}/lda/popular-topics-today/`),
-          fetch(`${baseUrl}/lda/popular-topics-this-week/`),
-          fetch(`${baseUrl}/lda/popular-topics-this-month/`),
-          fetch(`${baseUrl}/lda/hot-keywords`),
+          fetch(`${baseUrl}/lda/popular-topics-today/`, fetchOptions),
+          fetch(`${baseUrl}/lda/popular-topics-this-week/`, fetchOptions),
+          fetch(`${baseUrl}/lda/popular-topics-this-month/`, fetchOptions),
+          fetch(`${baseUrl}/lda/hot-keywords`, fetchOptions),
         ]);
 
         const [todayData, weekData, monthData, hotData] = await Promise.all([
