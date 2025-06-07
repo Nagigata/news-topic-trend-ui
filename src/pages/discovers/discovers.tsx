@@ -7,12 +7,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Flame, Snowflake } from "lucide-react";
 
 export const Discovers = () => {
   const [todayTopics, setTodayTopics] = useState<PopularTopic[]>([]);
   const [weekTopics, setWeekTopics] = useState<PopularTopic[]>([]);
+  const [weekHotTopics, setWeekHotTopics] = useState<PopularTopic[]>([]);
+  const [weekColdTopics, setWeekColdTopics] = useState<PopularTopic[]>([]);
   const [monthTopics, setMonthTopics] = useState<PopularTopic[]>([]);
+  const [monthHotTopics, setMonthHotTopics] = useState<PopularTopic[]>([]);
+  const [monthColdTopics, setMonthColdTopics] = useState<PopularTopic[]>([]);
   const [hotKeywords, setHotKeywords] = useState<HotKeyword[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,8 +47,16 @@ export const Discovers = () => {
         ]);
 
         setTodayTopics(todayData.results);
+
+        // Xử lý dữ liệu tuần
         setWeekTopics(weekData.results);
+        setWeekHotTopics(weekData.results[0]?.hot_topics || []);
+        setWeekColdTopics(weekData.results[0]?.cold_topics || []);
+
+        // Xử lý dữ liệu tháng
         setMonthTopics(monthData.results);
+        setMonthHotTopics(monthData.results[0]?.hot_topics || []);
+        setMonthColdTopics(monthData.results[0]?.cold_topics || []);
 
         // Convert hot keywords response to array
         const hotKeywordsArray = Object.values(hotData.results) as HotKeyword[];
@@ -115,7 +127,30 @@ export const Discovers = () => {
                       </p>
                     </div>
                   ) : (
-                    <RankingList items={weekTopics} type="popular" />
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4">
+                          Chủ đề phổ biến
+                        </h3>
+                        <RankingList items={weekTopics} type="popular" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Flame className="h-5 w-5 text-red-500" />
+                            Chủ đề đang tăng
+                          </h3>
+                          <RankingList items={weekHotTopics} type="popular" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Snowflake className="h-5 w-5 text-blue-500" />
+                            Chủ đề đang giảm
+                          </h3>
+                          <RankingList items={weekColdTopics} type="popular" />
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </TabsContent>
                 <TabsContent value="month">
@@ -127,7 +162,30 @@ export const Discovers = () => {
                       </p>
                     </div>
                   ) : (
-                    <RankingList items={monthTopics} type="popular" />
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4">
+                          Chủ đề phổ biến
+                        </h3>
+                        <RankingList items={monthTopics} type="popular" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Flame className="h-5 w-5 text-red-500" />
+                            Chủ đề đang tăng
+                          </h3>
+                          <RankingList items={monthHotTopics} type="popular" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <Snowflake className="h-5 w-5 text-blue-500" />
+                            Chủ đề đang giảm
+                          </h3>
+                          <RankingList items={monthColdTopics} type="popular" />
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </TabsContent>
                 <TabsContent value="trending">

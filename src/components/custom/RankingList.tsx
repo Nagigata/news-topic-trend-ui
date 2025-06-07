@@ -19,6 +19,8 @@ export interface PopularTopic {
   topic_name: string;
   count: number;
   papers: Paper[];
+  hot_topics?: PopularTopic[];
+  cold_topics?: PopularTopic[];
 }
 
 export interface HotKeyword {
