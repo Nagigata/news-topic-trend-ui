@@ -1,6 +1,4 @@
 import { formatTopicName } from "../utils";
-import { format, parseISO } from "date-fns";
-import { vi } from "date-fns/locale";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -14,10 +12,7 @@ export const CustomTooltip = ({
   label,
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const date = payload[0]?.payload.date;
-    const fullDate = date
-      ? format(parseISO(date), "d 'tháng' M, yyyy", { locale: vi })
-      : `Tháng 4 ${label}, 2025`;
+    const fullDate = payload[0]?.payload.fullDate || `April ${label}, 2025`;
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)
@@ -30,10 +25,10 @@ export const CustomTooltip = ({
     return (
       <div className="bg-card p-4 rounded-xl border shadow-lg">
         <h3 className="font-semibold text-card-foreground mb-2">
-          Thống kê cho {fullDate}
+          Statistics for {fullDate}
         </h3>
         <p className="text-sm text-muted-foreground mb-3">
-          Phân bố theo Chủ đề
+          Distribution by Topic
         </p>
         <div className="space-y-2">
           {sortedData.map((item, index) => (
