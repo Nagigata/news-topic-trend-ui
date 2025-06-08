@@ -12,7 +12,7 @@ export const CustomTooltip = ({
   label,
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const fullDate = payload[0]?.payload.fullDate || `April ${label}, 2025`;
+    const fullDate = payload[0]?.payload.fullDate || `Tháng 4 ${label}, 2025`;
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)

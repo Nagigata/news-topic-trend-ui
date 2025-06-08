@@ -12,6 +12,7 @@ import {
 } from "@/components/custom/KeywordBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { startOfWeek, endOfWeek, format, parseISO, addWeeks } from "date-fns";
+import { vi } from "date-fns/locale";
 
 // Generate color based on topic hash
 const generateTopicColors = (topics: string[]) => {
@@ -73,8 +74,14 @@ const fetchTrendData = async (timeRange: TimeRange, selectedTime: string) => {
     mode: "cors",
   });
   const data = await response.json();
-  console.log("API Response:", data);
-  return data;
+
+  // Format dates to Vietnamese
+  const formattedData = data.data.map((item: any) => ({
+    ...item,
+    fullDate: format(parseISO(item.date), "d 'tháng' M, yyyy", { locale: vi }),
+  }));
+
+  return { ...data, data: formattedData };
 };
 
 export const Analytics = () => {
