@@ -12,11 +12,11 @@ import { Loader2, Flame, Snowflake } from "lucide-react";
 export const Discovers = () => {
   const [todayTopics, setTodayTopics] = useState<PopularTopic[]>([]);
   const [weekTopics, setWeekTopics] = useState<PopularTopic[]>([]);
-  const [weekHotTopics, setWeekHotTopics] = useState<PopularTopic[]>([]);
-  const [weekColdTopics, setWeekColdTopics] = useState<PopularTopic[]>([]);
+  const [weekHotTopics, setWeekHotTopics] = useState<string[]>([]);
+  const [weekColdTopics, setWeekColdTopics] = useState<string[]>([]);
   const [monthTopics, setMonthTopics] = useState<PopularTopic[]>([]);
-  const [monthHotTopics, setMonthHotTopics] = useState<PopularTopic[]>([]);
-  const [monthColdTopics, setMonthColdTopics] = useState<PopularTopic[]>([]);
+  const [monthHotTopics, setMonthHotTopics] = useState<string[]>([]);
+  const [monthColdTopics, setMonthColdTopics] = useState<string[]>([]);
   const [hotKeywords, setHotKeywords] = useState<HotKeyword[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,46 +47,12 @@ export const Discovers = () => {
         ]);
 
         setTodayTopics(todayData.results);
-
-        // Xử lý dữ liệu tuần
         setWeekTopics(weekData.results);
-        // Tìm thông tin đầy đủ cho hot/cold topics từ results
-        const weekHotTopicsData =
-          weekData.hot_topics?.map((topicName: string) => {
-            const topicInfo = weekData.results.find(
-              (t: PopularTopic) => t.topic_name === topicName
-            );
-            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
-          }) || [];
-        const weekColdTopicsData =
-          weekData.cold_topics?.map((topicName: string) => {
-            const topicInfo = weekData.results.find(
-              (t: PopularTopic) => t.topic_name === topicName
-            );
-            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
-          }) || [];
-        setWeekHotTopics(weekHotTopicsData);
-        setWeekColdTopics(weekColdTopicsData);
-
-        // Xử lý dữ liệu tháng
+        setWeekHotTopics(weekData.hot_topics || []);
+        setWeekColdTopics(weekData.cold_topics || []);
         setMonthTopics(monthData.results);
-        // Tìm thông tin đầy đủ cho hot/cold topics từ results
-        const monthHotTopicsData =
-          monthData.hot_topics?.map((topicName: string) => {
-            const topicInfo = monthData.results.find(
-              (t: PopularTopic) => t.topic_name === topicName
-            );
-            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
-          }) || [];
-        const monthColdTopicsData =
-          monthData.cold_topics?.map((topicName: string) => {
-            const topicInfo = monthData.results.find(
-              (t: PopularTopic) => t.topic_name === topicName
-            );
-            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
-          }) || [];
-        setMonthHotTopics(monthHotTopicsData);
-        setMonthColdTopics(monthColdTopicsData);
+        setMonthHotTopics(monthData.hot_topics || []);
+        setMonthColdTopics(monthData.cold_topics || []);
 
         // Convert hot keywords response to array
         const hotKeywordsArray = Object.values(hotData.results) as HotKeyword[];
@@ -173,7 +139,19 @@ export const Discovers = () => {
                               (Xu hướng tăng)
                             </span>
                           </h3>
-                          <RankingList items={weekHotTopics} type="popular" />
+                          <div className="space-y-2">
+                            {weekHotTopics.map((topic, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md"
+                              >
+                                <span className="text-muted-foreground min-w-[2rem]">
+                                  {index + 1}.
+                                </span>
+                                <span className="font-medium">{topic}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
@@ -183,7 +161,19 @@ export const Discovers = () => {
                               (Xu hướng giảm)
                             </span>
                           </h3>
-                          <RankingList items={weekColdTopics} type="popular" />
+                          <div className="space-y-2">
+                            {weekColdTopics.map((topic, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md"
+                              >
+                                <span className="text-muted-foreground min-w-[2rem]">
+                                  {index + 1}.
+                                </span>
+                                <span className="font-medium">{topic}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -214,7 +204,19 @@ export const Discovers = () => {
                               (Xu hướng tăng)
                             </span>
                           </h3>
-                          <RankingList items={monthHotTopics} type="popular" />
+                          <div className="space-y-2">
+                            {monthHotTopics.map((topic, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md"
+                              >
+                                <span className="text-muted-foreground min-w-[2rem]">
+                                  {index + 1}.
+                                </span>
+                                <span className="font-medium">{topic}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
@@ -224,7 +226,19 @@ export const Discovers = () => {
                               (Xu hướng giảm)
                             </span>
                           </h3>
-                          <RankingList items={monthColdTopics} type="popular" />
+                          <div className="space-y-2">
+                            {monthColdTopics.map((topic, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md"
+                              >
+                                <span className="text-muted-foreground min-w-[2rem]">
+                                  {index + 1}.
+                                </span>
+                                <span className="font-medium">{topic}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
