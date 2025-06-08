@@ -135,17 +135,23 @@ export const Discovers = () => {
                         <RankingList items={weekTopics} type="popular" />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Flame className="h-5 w-5 text-red-500" />
+                        <div className="rounded-lg border bg-gradient-to-br from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent p-4">
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
+                            <Flame className="h-5 w-5" />
                             Chủ đề đang tăng
+                            <span className="text-sm font-normal text-muted-foreground ml-2">
+                              (Xu hướng tăng)
+                            </span>
                           </h3>
                           <RankingList items={weekHotTopics} type="popular" />
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Snowflake className="h-5 w-5 text-blue-500" />
+                        <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                            <Snowflake className="h-5 w-5" />
                             Chủ đề đang giảm
+                            <span className="text-sm font-normal text-muted-foreground ml-2">
+                              (Xu hướng giảm)
+                            </span>
                           </h3>
                           <RankingList items={weekColdTopics} type="popular" />
                         </div>
@@ -170,17 +176,23 @@ export const Discovers = () => {
                         <RankingList items={monthTopics} type="popular" />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Flame className="h-5 w-5 text-red-500" />
+                        <div className="rounded-lg border bg-gradient-to-br from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent p-4">
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
+                            <Flame className="h-5 w-5" />
                             Chủ đề đang tăng
+                            <span className="text-sm font-normal text-muted-foreground ml-2">
+                              (Xu hướng tăng)
+                            </span>
                           </h3>
                           <RankingList items={monthHotTopics} type="popular" />
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Snowflake className="h-5 w-5 text-blue-500" />
+                        <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
+                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                            <Snowflake className="h-5 w-5" />
                             Chủ đề đang giảm
+                            <span className="text-sm font-normal text-muted-foreground ml-2">
+                              (Xu hướng giảm)
+                            </span>
                           </h3>
                           <RankingList items={monthColdTopics} type="popular" />
                         </div>
