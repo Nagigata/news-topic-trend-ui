@@ -19,6 +19,11 @@ export interface ChartDataPoint {
   [key: string]: string | number | { [key: string]: number };
 }
 
+const formatXAxisDate = (dateStr: string) => {
+  const [month, day] = dateStr.split("-");
+  return `${day}-${month}`;
+};
+
 interface LineChartProps {
   data: ChartDataPoint[];
   topics: string[];
@@ -120,7 +125,12 @@ export const LineChart = ({
           data={data}
           margin={{ top: 25, right: 30, left: 20, bottom: 5 }}
         >
-          <XAxis dataKey="date" stroke="#888888" tickLine={false} />
+          <XAxis
+            dataKey="date"
+            stroke="#888888"
+            tickLine={false}
+            tickFormatter={formatXAxisDate}
+          />
           <YAxis
             domain={[0, yAxisMax]}
             tickFormatter={(value) => `${value}%`}
