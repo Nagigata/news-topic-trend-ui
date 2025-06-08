@@ -50,13 +50,43 @@ export const Discovers = () => {
 
         // Xử lý dữ liệu tuần
         setWeekTopics(weekData.results);
-        setWeekHotTopics(weekData.results[0]?.hot_topics || []);
-        setWeekColdTopics(weekData.results[0]?.cold_topics || []);
+        // Tìm thông tin đầy đủ cho hot/cold topics từ results
+        const weekHotTopicsData =
+          weekData.hot_topics?.map((topicName: string) => {
+            const topicInfo = weekData.results.find(
+              (t: PopularTopic) => t.topic_name === topicName
+            );
+            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
+          }) || [];
+        const weekColdTopicsData =
+          weekData.cold_topics?.map((topicName: string) => {
+            const topicInfo = weekData.results.find(
+              (t: PopularTopic) => t.topic_name === topicName
+            );
+            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
+          }) || [];
+        setWeekHotTopics(weekHotTopicsData);
+        setWeekColdTopics(weekColdTopicsData);
 
         // Xử lý dữ liệu tháng
         setMonthTopics(monthData.results);
-        setMonthHotTopics(monthData.results[0]?.hot_topics || []);
-        setMonthColdTopics(monthData.results[0]?.cold_topics || []);
+        // Tìm thông tin đầy đủ cho hot/cold topics từ results
+        const monthHotTopicsData =
+          monthData.hot_topics?.map((topicName: string) => {
+            const topicInfo = monthData.results.find(
+              (t: PopularTopic) => t.topic_name === topicName
+            );
+            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
+          }) || [];
+        const monthColdTopicsData =
+          monthData.cold_topics?.map((topicName: string) => {
+            const topicInfo = monthData.results.find(
+              (t: PopularTopic) => t.topic_name === topicName
+            );
+            return topicInfo || { topic_name: topicName, count: 0, papers: [] };
+          }) || [];
+        setMonthHotTopics(monthHotTopicsData);
+        setMonthColdTopics(monthColdTopicsData);
 
         // Convert hot keywords response to array
         const hotKeywordsArray = Object.values(hotData.results) as HotKeyword[];
