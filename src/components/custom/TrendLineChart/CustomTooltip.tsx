@@ -30,7 +30,7 @@ export const CustomTooltip = ({
         <p className="text-sm text-muted-foreground mb-3">
           Distribution by Topic
         </p>
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
           {sortedData.map((item, index) => (
             <div
               key={index}
