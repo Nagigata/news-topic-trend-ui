@@ -6,13 +6,18 @@ interface CustomTooltipProps {
   label?: string;
 }
 
-export const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: CustomTooltipProps) => {
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `ngày ${day} tháng ${month}, ${year}`;
+};
+
+export const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const fullDate = payload[0]?.payload.fullDate || `April ${label}, 2025`;
+    const fullDate = payload[0]?.payload.fullDate;
+    const formattedDate = formatDate(fullDate);
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)
@@ -25,10 +30,10 @@ export const CustomTooltip = ({
     return (
       <div className="bg-card p-4 rounded-xl border shadow-lg">
         <h3 className="font-semibold text-card-foreground mb-2">
-          Statistics for {fullDate}
+          Thống kê cho {formattedDate}
         </h3>
         <p className="text-sm text-muted-foreground mb-3">
-          Distribution by Topic
+          Phân bố theo Chủ đề
         </p>
         <div className="space-y-2">
           {sortedData.map((item, index) => (
