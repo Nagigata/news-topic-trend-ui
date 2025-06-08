@@ -1,4 +1,6 @@
 import { formatTopicName } from "../utils";
+import { format, parseISO } from "date-fns";
+import { vi } from "date-fns/locale";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -12,7 +14,10 @@ export const CustomTooltip = ({
   label,
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const fullDate = payload[0]?.payload.fullDate || `Tháng 4 ${label}, 2025`;
+    const date = payload[0]?.payload.date;
+    const fullDate = date
+      ? format(parseISO(date), "d 'tháng' M, yyyy", { locale: vi })
+      : `Tháng 4 ${label}, 2025`;
 
     const sortedData = [...payload]
       .sort((a, b) => b.value - a.value)
