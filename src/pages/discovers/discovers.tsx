@@ -134,7 +134,7 @@ export const Discovers = () => {
                         <div className="rounded-lg border bg-gradient-to-br from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
                             <Flame className="h-5 w-5" />
-                            Chủ đề đang tăng
+                            Chủ đề hot
                             <span className="text-sm font-normal text-muted-foreground ml-2">
                               (Xu hướng tăng)
                             </span>
@@ -156,7 +156,7 @@ export const Discovers = () => {
                         <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
                             <Snowflake className="h-5 w-5" />
-                            Chủ đề đang giảm
+                            Chủ đề cold
                             <span className="text-sm font-normal text-muted-foreground ml-2">
                               (Xu hướng giảm)
                             </span>
@@ -199,7 +199,7 @@ export const Discovers = () => {
                         <div className="rounded-lg border bg-gradient-to-br from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
                             <Flame className="h-5 w-5" />
-                            Chủ đề đang tăng
+                            Chủ đề hot
                             <span className="text-sm font-normal text-muted-foreground ml-2">
                               (Xu hướng tăng)
                             </span>
@@ -221,7 +221,7 @@ export const Discovers = () => {
                         <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent p-4">
                           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
                             <Snowflake className="h-5 w-5" />
-                            Chủ đề đang giảm
+                            Chủ đề cold
                             <span className="text-sm font-normal text-muted-foreground ml-2">
                               (Xu hướng giảm)
                             </span>
