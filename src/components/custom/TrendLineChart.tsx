@@ -106,13 +106,13 @@ export const LineChart = ({
           className="text-xs bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1.5 rounded-md font-medium transition-colors"
           onClick={showAllTopics}
         >
-          Show All
+          Hiển thị tất cả
         </button>
         <button
           className="text-xs bg-muted hover:bg-muted/80 px-3 py-1.5 rounded-md font-medium transition-colors"
           onClick={hideAllTopics}
         >
-          Clear All
+          Xóa tất cả
         </button>
       </div>
       <ResponsiveContainer width="100%" height="100%">

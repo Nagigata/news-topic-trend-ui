@@ -25,10 +25,10 @@ export const CustomTooltip = ({
     return (
       <div className="bg-card p-4 rounded-xl border shadow-lg">
         <h3 className="font-semibold text-card-foreground mb-2">
-          Statistics for {fullDate}
+          Thống kê cho {fullDate}
         </h3>
         <p className="text-sm text-muted-foreground mb-3">
-          Distribution by Topic
+          Phân bố theo Chủ đề
         </p>
         <div className="space-y-2">
           {sortedData.map((item, index) => (
