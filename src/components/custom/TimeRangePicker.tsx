@@ -92,14 +92,12 @@ const getTimeOptions = (timeRange: TimeRange): TimeOption[] => {
       return quarters;
 
     case "year":
-      const years = [];
-      for (let i = currentYear - 2; i <= currentYear; i++) {
-        years.push({
-          value: String(i),
-          label: `Năm ${i}`,
-        });
-      }
-      return years;
+      return [
+        {
+          value: "2025",
+          label: "Năm 2025",
+        },
+      ];
 
     default:
       return [];

@@ -10,7 +10,7 @@ export const Overview = () => {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
-        transition={{ delay: 0.75 }}
+        transition={{ delay: 0.25 }}
       >
         <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
           <p className="flex flex-row justify-center gap-4 items-center">
@@ -26,12 +26,7 @@ export const Overview = () => {
             Người bạn AI cho tin tức và chủ đề đang thịnh hành
           </p>
           <div className="text-left space-y-4">
-            <p className="font-medium">Tôi có thể giúp bạn với:</p>
-            <ul className="list-disc pl-8 space-y-2">
-              <li>Tin tức và sự kiện mới nhất từ các bài báo hôm nay</li>
-              <li>Chủ đề đang thịnh hành trên các danh mục khác nhau</li>
-              <li>Tìm kiếm các bài báo liên quan đến chủ đề bạn quan tâm</li>
-            </ul>
+            <p className="text-lg">Hãy cho tôi biết chủ đề mà bạn muốn biết</p>
           </div>
         </div>
       </motion.div>
