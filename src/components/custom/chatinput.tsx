@@ -3,8 +3,8 @@ import { cx } from "classix";
 import { Button } from "../ui/button";
 import { ArrowUpIcon } from "./icons";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { useState } from "react";
+// import { motion } from "framer-motion";
+// import { useState } from "react";
 
 interface ChatInputProps {
   question: string;
@@ -13,18 +13,18 @@ interface ChatInputProps {
   isLoading: boolean;
 }
 
-const suggestedActions = [
-  {
-    title: "Tin nổi bật hôm nay",
-    label: "sự kiện chính",
-    action: "Cho tôi biết những tin tức nổi bật nhất hôm nay?",
-  },
-  {
-    title: "Xu hướng thịnh hành",
-    label: "các chủ đề hot",
-    action: "Những từ khóa nào đang xu hướng hiện nay?",
-  },
-];
+// const suggestedActions = [
+//   {
+//     title: "Tin nổi bật hôm nay",
+//     label: "sự kiện chính",
+//     action: "Cho tôi biết những tin tức nổi bật nhất hôm nay?",
+//   },
+//   {
+//     title: "Xu hướng thịnh hành",
+//     label: "các chủ đề hot",
+//     action: "Những từ khóa nào đang xu hướng hiện nay?",
+//   },
+// ];
 
 export const ChatInput = ({
   question,
@@ -32,11 +32,11 @@ export const ChatInput = ({
   onSubmit,
   isLoading,
 }: ChatInputProps) => {
-  const [showSuggestions, setShowSuggestions] = useState(true);
+  // const [showSuggestions, setShowSuggestions] = useState(true);
 
   return (
     <div className="relative w-full flex flex-col gap-4">
-      {showSuggestions && (
+      {/* {showSuggestions && (
         <div className="hidden md:grid sm:grid-cols-2 gap-2 w-full">
           {suggestedActions.map((suggestedAction, index) => (
             <motion.div
@@ -64,7 +64,7 @@ export const ChatInput = ({
             </motion.div>
           ))}
         </div>
-      )}
+      )} */}
       <input
         type="file"
         className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
@@ -88,7 +88,7 @@ export const ChatInput = ({
                 "Vui lòng đợi cho đến khi mô hình hoàn thành phản hồi!"
               );
             } else {
-              setShowSuggestions(false);
+              // setShowSuggestions(false);
               onSubmit();
             }
           }
