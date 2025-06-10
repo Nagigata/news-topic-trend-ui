@@ -12,21 +12,27 @@ export const Overview = () => {
         exit={{ opacity: 0, scale: 0.98 }}
         transition={{ delay: 0.25 }}
       >
-        <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
-          <p className="flex flex-row justify-center gap-4 items-center">
-            <BotIcon size={44} />
-            <span>+</span>
-            <TrendingUp size={40} />
-            <span>+</span>
-            <Newspaper size={40} />
-          </p>
-          <p className="text-lg">
-            Chào mừng đến với <strong>Trợ lý Phân tích Tin tức</strong>
-            <br />
-            Người bạn AI cho tin tức và chủ đề đang thịnh hành
-          </p>
-          <div className="text-left space-y-4">
-            <p className="text-lg">Hãy cho tôi biết chủ đề mà bạn muốn biết</p>
+        <div className="rounded-xl p-8 flex flex-col gap-6 leading-relaxed text-center max-w-xl mx-auto bg-card shadow-lg">
+          <div className="flex flex-row justify-center gap-4 items-center">
+            <BotIcon size={48} className="text-primary" />
+            <span className="text-2xl font-bold text-muted-foreground">+</span>
+            <TrendingUp size={44} className="text-primary" />
+            <span className="text-2xl font-bold text-muted-foreground">+</span>
+            <Newspaper size={44} className="text-primary" />
+          </div>
+          <div className="space-y-4">
+            <h1 className="text-2xl font-bold">
+              Chào mừng đến với{" "}
+              <span className="text-primary">Trợ lý Phân tích Tin tức</span>
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Người bạn AI cho tin tức và chủ đề đang thịnh hành
+            </p>
+          </div>
+          <div className="mt-4">
+            <p className="text-xl font-medium text-primary">
+              Hãy cho tôi biết chủ đề mà bạn muốn biết
+            </p>
           </div>
         </div>
       </motion.div>
